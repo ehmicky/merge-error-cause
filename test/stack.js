@@ -6,6 +6,10 @@ import { hasAggregateErrors } from './helpers/main.js'
 
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
+const isSameStack = function (t, stackA, stackB) {
+  t.is(getFirstStackLine(stackA), getFirstStackLine(stackB))
+}
+
 const getFirstStackLine = function (stack) {
   const lines = stack.split('\n')
   const index = lines.findIndex(isStackLine)
@@ -20,10 +24,7 @@ test('Child stack trace is used', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
   const { stack } = error.cause
-  t.is(
-    getFirstStackLine(mergeErrorCause(error).stack),
-    getFirstStackLine(stack),
-  )
+  isSameStack(t, mergeErrorCause(error).stack, stack)
 })
 
 test('Child stack trace is used deeply', (t) => {
@@ -31,10 +32,7 @@ test('Child stack trace is used deeply', (t) => {
   error.cause = new Error('cause')
   error.cause.cause = new Error('innerCause')
   const { stack } = error.cause.cause
-  t.is(
-    getFirstStackLine(mergeErrorCause(error).stack),
-    getFirstStackLine(stack),
-  )
+  isSameStack(t, mergeErrorCause(error).stack, stack)
 })
 
 each([undefined, '', 'invalid'], ({ title }, invalidStack) => {
@@ -43,10 +41,7 @@ each([undefined, '', 'invalid'], ({ title }, invalidStack) => {
     error.cause = new Error('cause')
     error.cause.stack = invalidStack
     const { stack } = error
-    t.is(
-      getFirstStackLine(mergeErrorCause(error).stack),
-      getFirstStackLine(stack),
-    )
+    isSameStack(t, mergeErrorCause(error).stack, stack)
   })
 })
 
@@ -56,10 +51,7 @@ test('Invalid child stack traces are not used deeply', (t) => {
   error.cause.cause = new Error('innerCause')
   error.cause.cause.stack = ''
   const { stack } = error.cause
-  t.is(
-    getFirstStackLine(mergeErrorCause(error).stack),
-    getFirstStackLine(stack),
-  )
+  isSameStack(t, mergeErrorCause(error).stack, stack)
 })
 
 test('Invalid child stack traces at the top are ignored', (t) => {
@@ -69,10 +61,7 @@ test('Invalid child stack traces at the top are ignored', (t) => {
   error.cause.cause = new Error('innerCause')
   error.cause.stack = ''
   const { stack } = error.cause.cause
-  t.is(
-    getFirstStackLine(mergeErrorCause(error).stack),
-    getFirstStackLine(stack),
-  )
+  isSameStack(t, mergeErrorCause(error).stack, stack)
 })
 
 // eslint-disable-next-line unicorn/no-null
@@ -81,10 +70,7 @@ each([null, 'message'], ({ title }, cause) => {
     const error = new Error('test')
     error.cause = cause
     const { stack } = error
-    t.is(
-      getFirstStackLine(mergeErrorCause(error).stack),
-      getFirstStackLine(stack),
-    )
+    isSameStack(t, mergeErrorCause(error).stack, stack)
   })
 })
 
@@ -92,10 +78,7 @@ test('Plain object stack traces are used', (t) => {
   const error = new Error('test')
   const { stack } = new Error('cause')
   error.cause = { stack }
-  t.is(
-    getFirstStackLine(mergeErrorCause(error).stack),
-    getFirstStackLine(stack),
-  )
+  isSameStack(t, mergeErrorCause(error).stack, stack)
 })
 
 test('New stack traces are created if none available', (t) => {
@@ -111,11 +94,8 @@ if (hasAggregateErrors()) {
     const { stack: innerStack } = innerError
     const { stack } = error
     const mergedError = mergeErrorCause(error)
-    t.is(getFirstStackLine(mergedError.stack), getFirstStackLine(stack))
-    t.is(
-      getFirstStackLine(mergedError.errors[0].stack),
-      getFirstStackLine(innerStack),
-    )
+    isSameStack(t, mergedError.stack, stack)
+    isSameStack(t, mergedError.errors[0].stack, innerStack)
   })
 }
 
