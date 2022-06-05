@@ -22,3 +22,21 @@ test('Parent error properties are merged with priority', (t) => {
   error.cause.prop = false
   t.true(mergeErrorCause(error).prop)
 })
+
+test('Symbol error properties are merged', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  const symbol = Symbol('prop')
+  error.cause[symbol] = true
+  t.true(mergeErrorCause(error)[symbol])
+})
+
+test('Inherited error properties are not merged', (t) => {
+  const TestError = class extends Error {
+    // eslint-disable-next-line class-methods-use-this
+    testFunc() {}
+  }
+  const error = new TypeError('test')
+  error.cause = new TestError('cause')
+  t.false('testFunc' in mergeErrorCause(error))
+})
