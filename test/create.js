@@ -20,25 +20,35 @@ class TestError extends Error {
 each(
   [
     { ParentError: Error, ChildError: Error, name: 'Error' },
-    ...(hasAggregateErrors && [
-      {
-        ParentError: Error,
-        ChildError: AggregateError,
-        name: 'AggregateError',
-      },
-      {
-        ParentError: AggregateError,
-        ChildError: Error,
-        name: 'AggregateError',
-      },
-      {
-        ParentError: AggregateError,
-        ChildError: AggregateError,
-        name: 'AggregateError',
-      },
-      { ParentError: AggregateError, ChildError: TypeError, name: 'TypeError' },
-      { ParentError: TypeError, ChildError: AggregateError, name: 'TypeError' },
-    ]),
+    ...(hasAggregateErrors()
+      ? [
+          {
+            ParentError: Error,
+            ChildError: AggregateError,
+            name: 'AggregateError',
+          },
+          {
+            ParentError: AggregateError,
+            ChildError: Error,
+            name: 'AggregateError',
+          },
+          {
+            ParentError: AggregateError,
+            ChildError: AggregateError,
+            name: 'AggregateError',
+          },
+          {
+            ParentError: AggregateError,
+            ChildError: TypeError,
+            name: 'TypeError',
+          },
+          {
+            ParentError: TypeError,
+            ChildError: AggregateError,
+            name: 'TypeError',
+          },
+        ]
+      : []),
     { ParentError: Error, ChildError: TypeError, name: 'TypeError' },
     { ParentError: TypeError, ChildError: Error, name: 'TypeError' },
     { ParentError: TypeError, ChildError: RangeError, name: 'TypeError' },
