@@ -80,6 +80,12 @@ test('Plain object stack traces are used', (t) => {
   )
 })
 
+test('New stack traces are created if none available', (t) => {
+  const error = new Error('test')
+  error.stack = ''
+  t.true(mergeErrorCause(error).stack.includes('at '))
+})
+
 test('error.stack is not enumerable', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
