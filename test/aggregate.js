@@ -31,4 +31,15 @@ if (hasAggregateErrors()) {
     t.is(message, 'secondCause\ntest')
     t.is(errors[0].message, 'cause\ninnerError')
   })
+
+  test('Normalize "errors"', (t) => {
+    const error = new AggregateError(['innerError'], 'test')
+    t.is(mergeErrorCause(error).errors[0].message, 'innerError')
+  })
+
+  test('Handles invalid "errors"', (t) => {
+    const error = new AggregateError([], 'test')
+    error.errors = 'innerError'
+    t.is(mergeErrorCause(error).errors.length, 0)
+  })
 }
