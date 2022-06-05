@@ -1,18 +1,9 @@
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 
-const { propertyIsEnumerable: isEnum } = Object.prototype
+import { hasAggregateErrors } from './helpers/main.js'
 
-// `AggregateError` is not available in Node <15.0.0 and in some browsers
-const hasAggregateErrors = function () {
-  try {
-    // eslint-disable-next-line no-unused-expressions
-    AggregateError
-    return true
-  } catch {
-    return false
-  }
-}
+const { propertyIsEnumerable: isEnum } = Object.prototype
 
 if (hasAggregateErrors()) {
   test('Merge cause in "errors" without "cause"', (t) => {
