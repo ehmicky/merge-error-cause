@@ -76,11 +76,12 @@ returned. Otherwise, a new `error` is created and returned.
 [`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
 is a
 [recent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause#browser_compatibility)
-JavaScript feature to wrap error messages and properties:
+JavaScript feature to wrap error messages and properties.
 
 ```js
 try {
-  validateUserId()
+  validateUserId(userId)
+  sendDatabaseRequest('create', userId)
 } catch (cause) {
   throw new Error('Could not create user.', { cause })
 }
@@ -92,13 +93,13 @@ However, it comes with a few issues.
 
 ### Problem
 
-Consumers need to traverse `error.cause`:
+Consumers need to traverse `error.cause`.
 
 <!-- eslint-disable max-depth -->
 
 ```js
 try {
-  validateUserId()
+  createUser(userId)
 } catch (error) {
   if (error.code === 'E101' || (error.cause && error.cause.code === 'E101')) {
     // Checking for properties require traversing `error.cause`
@@ -128,7 +129,7 @@ This library merges `error.cause` recursively. It also ensures `error` is an
 
 ```js
 try {
-  validateUserId()
+  createUser(userId)
 } catch (error) {
   if (error.code === 'E101') {
   }
