@@ -329,8 +329,8 @@ try {
 
 ## Aggregate errors
 
-Any [`aggregateError.errors.*.cause`]
-(https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError)
+Any
+[`aggregateError.errors[*].cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError)
 is processed recursively. However, `aggregateError.errors` are not merged with
 each other since those are different from each other.
 
