@@ -8,7 +8,7 @@ import {
 import { createError } from './create.js'
 import { mergeMessage } from './message.js'
 import { copyProps } from './props.js'
-import { childHasStack, fixStack } from './stack.js'
+import { getStackIndex, fixStack } from './stack.js'
 
 // Merge `error.cause` recursively to a single error.
 // This allows consumers to conveniently wrap errors using:
@@ -42,7 +42,11 @@ import { childHasStack, fixStack } from './stack.js'
 // `normalizeError()` is called again to ensure the new `name|message` is
 // reflected in `error.stack`.
 export default function mergeErrorCause(error) {
-  const hasChildStack = childHasStack(error)
+  const stackIndex = getStackIndex(error)
+  return mergeError(error, stackIndex)
+}
+
+const mergeError = function (error, stackIndex) {
   const parent = normalizeException(error)
   const parentErrors = getAggregateErrors(parent, mergeErrorCause)
 
@@ -51,14 +55,14 @@ export default function mergeErrorCause(error) {
     return parent
   }
 
-  return mergeCause(parent, parentErrors, hasChildStack)
+  return mergeCause(parent, parentErrors, stackIndex)
 }
 
-const mergeCause = function (parent, parentErrors, hasChildStack) {
-  const child = mergeErrorCause(parent.cause)
+const mergeCause = function (parent, parentErrors, stackIndex) {
+  const child = mergeError(parent.cause, stackIndex - 1)
   const message = mergeMessage(parent.message, child.message)
   const mergedError = createError(parent, child, message)
-  fixStack({ mergedError, parent, child, hasChildStack })
+  fixStack({ mergedError, parent, child, stackIndex })
   mergeAggregate({ mergedError, parentErrors, child, mergeErrorCause })
   copyProps(mergedError, parent, child)
   return normalizeException(mergedError)

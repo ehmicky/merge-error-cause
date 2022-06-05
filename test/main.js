@@ -21,10 +21,8 @@ test('Error cause is merged', (t) => {
 })
 
 test('Error cause is merged deeply', (t) => {
-  const cause = new Error('cause')
-  // eslint-disable-next-line fp/no-mutation
-  cause.cause = new Error('innerCause')
   const error = new Error('test')
-  error.cause = cause
+  error.cause = new Error('cause')
+  error.cause.cause = new Error('innerCause')
   t.is(mergeErrorCause(error).message, 'innerCause\ncause\ntest')
 })

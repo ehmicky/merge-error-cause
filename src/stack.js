@@ -2,19 +2,32 @@ import { setErrorProperty } from './set.js'
 
 // This needs to be performed before `child` is normalized by either
 // `mergeErrorCause(parent.cause)` or `normalizeException(parent)`
-export const childHasStack = function (parent) {
-  return isObject(parent) && hasStack(parent.cause)
+export const getStackIndex = function (error) {
+  const stackIndex = findStackIndex(error, 0)
+  return stackIndex === undefined ? 0 : stackIndex
 }
 
-const hasStack = function (child) {
-  return isObject(child) && (isStackProp(child.stack) || hasStack(child.cause))
+const findStackIndex = function (error, index) {
+  if (!isObject(error)) {
+    return
+  }
+
+  const childIndex = findStackIndex(error.cause, index + 1)
+
+  if (childIndex !== undefined) {
+    return childIndex
+  }
+
+  return hasValidStack(error) ? index : undefined
 }
 
+// Errors can be plain objects with a `stack` property, which is handled by
+// `normalize-exception`
 const isObject = function (value) {
   return typeof value === 'object' && value !== null
 }
 
-const isStackProp = function (stack) {
+const hasValidStack = function ({ stack }) {
   return typeof stack === 'string' && stack.includes(STACK_LINE_START)
 }
 
@@ -24,12 +37,7 @@ const STACK_LINE_START = 'at '
 // the same lines.
 // Do not do it if the child error is missing a proper stack trace.
 //  - Unless it has a `cause` which has one
-export const fixStack = function ({
-  mergedError,
-  parent,
-  child,
-  hasChildStack,
-}) {
-  const { stack } = hasChildStack ? child : parent
+export const fixStack = function ({ mergedError, parent, child, stackIndex }) {
+  const { stack } = stackIndex > 0 ? child : parent
   setErrorProperty(mergedError, 'stack', stack)
 }
