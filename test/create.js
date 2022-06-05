@@ -63,3 +63,14 @@ each(
     })
   },
 )
+
+if (hasAggregateErrors()) {
+  test('Aggregate errors get new types', (t) => {
+    const innerError = new TypeError('innerError')
+    const error = new RangeError('test')
+    error.cause = new AggregateError([innerError], 'cause')
+    const { name, errors } = mergeErrorCause(error)
+    t.is(name, 'RangeError')
+    t.is(errors[0].name, 'TypeError')
+  })
+}
