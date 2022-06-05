@@ -6,12 +6,25 @@
 
 Merge an error with its `cause`.
 
-Work in progress!
+This merges
+[`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
+recursively with its parent `error`, including its
+[`message`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/message),
+[`stack`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/stack),
+[`name`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name)
+and
+[`errors`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError).
 
-# Examples
+# Example
 
 ```js
+import mergeErrorCause from 'merge-error-cause'
 
+try {
+  doSomething()
+} catch (error) {
+  throw mergeErrorCause(error)
+}
 ```
 
 # Install
@@ -35,6 +48,284 @@ _Return value_: `Error`
 
 If `error` is an `Error` instance and has a `cause`, it is returned. Otherwise,
 a new one is created and returned.
+
+# Background
+
+[`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
+is a recent JavaScript feature which allows you to wrap errors:
+
+```js
+try {
+  doSomething()
+} catch (cause) {
+  throw new Error('doSomething failed', { cause })
+}
+```
+
+It is a built-in convenient way to wrap the error message and properties.
+However, it comes with a few issues.
+
+## Traversing `error.cause`
+
+### Problem
+
+Consumers need to traverse `error.cause`:
+
+<!-- eslint-disable max-depth -->
+
+```js
+try {
+  doSomething()
+} catch (error) {
+  if (error.code === 'E101' || (error.cause && error.cause.code === 'E101')) {
+    // Checking for properties require traversing `error.cause`
+  }
+
+  if (
+    error.name === 'UserError' ||
+    (error.cause && error.cause.name === 'UserError')
+  ) {
+    // Do does checking for error type
+  }
+}
+```
+
+This is tricky to get right. For example:
+
+- `error.cause.cause` might also exist (and so on)
+- If `error` is not an `Error` instance, `error.name` will throw
+- Recursing over `error.cause` might be infinite
+
+### Solution
+
+This library merges `error.cause` recursively. It also ensures `error` is an
+`Error` instance. Consumers can then handle errors without checking its `cause`.
+
+<!-- eslint-disable max-depth -->
+
+```js
+try {
+  doSomething()
+} catch (error) {
+  if (error.code === 'E101') {
+  }
+
+  if (error.name === 'UserError') {
+  }
+}
+```
+
+## Verbose stack trace
+
+### Problem
+
+Stack traces with multiple `error.cause` can be quite verbose.
+
+```
+Error: Could not create user group.
+    at createUserGroup (/home/user/app/user_group.js:19:9)
+    at createGroups (/home/user/app/user_group.js:101:10)
+    at startApp (/home/user/app/app.js:35:20)
+    at main (/home/user/app/app.js:3:4) {
+  [cause]: Error: Could not create user.
+      at newUser (/home/user/app/user.js:52:7)
+      at createUser (/home/user/app/user.js:43:5)
+      at createUserGroup (/home/user/app/user_group.js:17:11)
+      at createGroups (/home/user/app/user_group.js:101:10)
+      at startApp (/home/user/app/app.js:35:20)
+      at main (/home/user/app/app.js:3:4) {
+    [cause]: Error: Invalid user.
+        at validateUser (/home/user/app/user.js:159:8)
+        at userInstance (/home/user/app/user.js:20:4)
+        at newUser (/home/user/app/user.js:50:7)
+        at createUser (/home/user/app/user.js:43:5)
+        at createUserGroup (/home/user/app/user_group.js:17:11)
+        at createGroups (/home/user/app/user_group.js:101:10)
+        at startApp (/home/user/app/app.js:35:20)
+        at main (/home/user/app/app.js:3:4) {
+      [cause]: UserError: User "15" does not exist.
+          at checkUserId (/home/user/app/user.js:195:3)
+          at checkUserExist (/home/user/app/user.js:170:10)
+          at validateUser (/home/user/app/user.js:157:23)
+          at userInstance (/home/user/app/user.js:20:4)
+          at newUser (/home/user/app/user.js:50:7)
+          at createUser (/home/user/app/user.js:43:5)
+          at createUserGroup (/home/user/app/user_group.js:17:11)
+          at createGroups (/home/user/app/user_group.js:101:10)
+          at startApp (/home/user/app/app.js:35:20)
+          at main (/home/user/app/app.js:3:4)
+    }
+  }
+}
+```
+
+Each error cause is indented and printed separately.
+
+- The stack traces mostly repeat each other since the function calls are part of
+  the same line execution
+- The most relevant message (innermost) is harder to find since it is shown last
+
+### Solution
+
+This library only keeps the innermost stack trace. Error messages are
+concatenated by default from innermost to outermost. This results in much
+simpler stack traces without losing any information.
+
+```
+UserError: User "15" does not exist.
+Invalid user.
+Could not create user.
+Could not create user group.
+    at checkUserId (/home/user/app/user.js:195:3)
+    at checkUserExist (/home/user/app/user.js:170:10)
+    at validateUser (/home/user/app/user.js:157:23)
+    at userInstance (/home/user/app/user.js:20:4)
+    at newUser (/home/user/app/user.js:50:7)
+    at createUser (/home/user/app/user.js:43:5)
+    at createUserGroup (/home/user/app/user_group.js:17:11)
+    at createGroups (/home/user/app/user_group.js:101:10)
+    at startApp (/home/user/app/app.js:35:20)
+    at main (/home/user/app/app.js:3:4)
+```
+
+# Features
+
+## Stack traces
+
+Only the innermost stack trace is kept.
+
+Please make sure you use `async`/`await` instead of `new Promise()` or
+callbacks, since parent stack traces are missing when using callbacks.
+
+## Messages
+
+Error messages are wrapped from innermost to outermost.
+
+```js
+try {
+  throw new Error('Invalid user id.')
+} catch (cause) {
+  throw new Error('Could not create user.', { cause })
+  // Printed as:
+  //   Error: Invalid user id.
+  //   Could not create user.
+}
+```
+
+If the parent error message ends with `:`, this is reversed.
+
+```js
+try {
+  throw new Error('Invalid user id.')
+} catch (cause) {
+  throw new Error('Could not create user:', { cause })
+  // Printed as:
+  //   Error: Could not create user: Invalid user id.
+}
+```
+
+`:` can optionally be followed by a newline.
+
+```js
+try {
+  throw new Error('Invalid user id.')
+} catch (cause) {
+  throw new Error('Could not create user:\n', { cause })
+  // Printed as:
+  //   Error: Could not create user:
+  //   Invalid user id.
+}
+```
+
+## Error type
+
+By default, the parent error type is used.
+
+```js
+try {
+  throw new TypeError('User id is not a string.')
+} catch (cause) {
+  const error = new UserError('Could not create user.', { cause })
+  const mergedError = mergeErrorCause(error)
+  console.log(mergedError instanceof UserError) // true
+  console.log(mergedError.name) // 'UserError'
+}
+```
+
+If the parent error type is `Error` or `AggregateError`, the child type is used
+instead. This allows wrapping error message or properties while keeping the
+type.
+
+```js
+try {
+  throw new TypeError('User id is not a string.')
+} catch (cause) {
+  const error = new Error('Could not create user.', { cause })
+  console.log(mergeErrorCause(error) instanceof TypeError) // true
+}
+```
+
+The error instance is created with `new ErrorType(message)`. If this throws,
+`new Error(message)` is used instead.
+
+## Error properties
+
+Error properties are shallowly merged.
+
+<!-- eslint-disable fp/no-mutation -->
+
+```js
+try {
+  const error = new Error('Invalid user id.')
+  // This is kept
+  error.userId = '5'
+  throw error
+} catch (cause) {
+  const parentError = new Error('Could not create user.', { cause })
+  // This is kept too
+  parentError.invalidUser = true
+  throw parentError
+}
+```
+
+Empty error messages are ignored. This is useful when wrapping error properties.
+
+<!-- eslint-disable fp/no-mutation, unicorn/error-message -->
+
+```js
+try {
+  throw new Error('Invalid user id.')
+} catch (cause) {
+  const parentError = new Error('', { cause })
+  parentError.invalidUser = true
+  throw parentError
+}
+```
+
+## Aggregate errors
+
+If an error inside
+[an `AggregateError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError)
+has a `cause`, it will be processed. However, the `errors` are not merged with
+each other since those are different from each other.
+
+If both an error and its `error.cause` have an `errors` property, those are
+concatenated.
+
+## Normalization
+
+Invalid errors [are normalized](https://github.com/ehmicky/normalize-exception)
+to proper `Error` instances.
+
+<!-- eslint-disable no-throw-literal -->
+
+```js
+try {
+  throw 'Invalid user id.'
+} catch (error) {
+  console.log(mergeErrorCause(error)) // Error: Invalid user id.
+}
+```
 
 # Support
 

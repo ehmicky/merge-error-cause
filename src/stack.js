@@ -37,6 +37,9 @@ const STACK_LINE_START = 'at '
 // the same lines.
 // Do not do it if the child error is missing a proper stack trace.
 //  - Unless it has a `cause` which has one
+// Merging stacks might lose some stack trace if:
+//  - `Error.stackTraceLimit` is too low, in which case it should be increased
+//  - Using callbacks, in which case `async`/`await` should be used
 export const fixStack = function ({ mergedError, parent, child, stackIndex }) {
   const { stack } = stackIndex > 0 ? child : parent
   setErrorProperty(mergedError, 'stack', stack)
