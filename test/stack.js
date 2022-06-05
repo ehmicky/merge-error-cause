@@ -57,6 +57,29 @@ test('Invalid child stack traces are not used deeply', (t) => {
   )
 })
 
+test('Invalid child stack traces at the top are ignored', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  error.cause.cause = new Error('innerCause')
+  error.stack = ''
+  error.cause.stack = ''
+  const { stack } = error.cause.cause
+  t.is(
+    getFirstStackLine(mergeErrorCause(error).stack),
+    getFirstStackLine(stack),
+  )
+})
+
+test('Plain object stack traces are used', (t) => {
+  const error = new Error('test')
+  const { stack } = new Error('cause')
+  error.cause = { stack }
+  t.is(
+    getFirstStackLine(mergeErrorCause(error).stack),
+    getFirstStackLine(stack),
+  )
+})
+
 test('error.stack is not enumerable', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
