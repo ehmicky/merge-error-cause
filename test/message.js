@@ -47,3 +47,9 @@ test('Does not prepend messages with newline but no colon', (t) => {
   error.cause = new Error('cause')
   t.is(mergeErrorCause(error).message, 'cause\ntest')
 })
+
+test('New error message is reflected in stack', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  t.true(mergeErrorCause(error).stack.includes('cause\ntest'))
+})
