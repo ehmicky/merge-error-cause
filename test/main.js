@@ -28,3 +28,29 @@ test('Error cause is merged deeply', (t) => {
   error.cause = cause
   t.is(mergeErrorCause(error).message, 'innerCause\ncause\ntest')
 })
+
+test('Messages are trimmed', (t) => {
+  const error = new Error(' test ')
+  error.cause = new Error(' cause ')
+  t.is(mergeErrorCause(error).message, 'cause\ntest')
+})
+
+test('Empty parent messages are ignored', (t) => {
+  // eslint-disable-next-line unicorn/error-message
+  const error = new Error('')
+  error.prop = true
+  error.cause = new Error('cause')
+  const { message, prop } = mergeErrorCause(error)
+  t.is(message, 'cause')
+  t.true(prop)
+})
+
+test('Empty child messages are ignored', (t) => {
+  const error = new Error('test')
+  // eslint-disable-next-line unicorn/error-message
+  error.cause = new Error('')
+  error.cause.prop = true
+  const { message, prop } = mergeErrorCause(error)
+  t.is(message, 'test')
+  t.true(prop)
+})
