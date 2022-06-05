@@ -46,7 +46,7 @@
     "test": "test"
   },
   "dependencies": {
-    "normalize-exception": "^1.0.0"
+    "normalize-exception": "^1.0.1"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^1.0.76",
