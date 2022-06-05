@@ -219,8 +219,8 @@ Could not create user group.
 
 Only the innermost stack trace is kept.
 
-Please make sure you use `async`/`await` instead of `new Promise()` or
-callbacks, since parent stack traces are missing when using callbacks.
+Please make sure you use `async`/`await` instead of `new Promise()` or callbacks
+to prevent truncated stack traces.
 
 ## Messages
 
