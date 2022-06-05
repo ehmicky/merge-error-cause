@@ -74,13 +74,13 @@ returned. Otherwise, a new `error` is created and returned.
 # Background
 
 [`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
-is a recent JavaScript feature which allows you to wrap errors:
+is a recent JavaScript feature to wrap errors:
 
 ```js
 try {
-  doSomething()
+  validateUserId()
 } catch (cause) {
-  throw new Error('doSomething failed', { cause })
+  throw new Error('Could not create user.', { cause })
 }
 ```
 
@@ -97,7 +97,7 @@ Consumers need to traverse `error.cause`:
 
 ```js
 try {
-  doSomething()
+  validateUserId()
 } catch (error) {
   if (error.code === 'E101' || (error.cause && error.cause.code === 'E101')) {
     // Checking for properties require traversing `error.cause`
@@ -127,7 +127,7 @@ This library merges `error.cause` recursively. It also ensures `error` is an
 
 ```js
 try {
-  doSomething()
+  validateUserId()
 } catch (error) {
   if (error.code === 'E101') {
   }
