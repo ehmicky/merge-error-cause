@@ -2,6 +2,8 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
+import { hasAggregateErrors } from './helpers/main.js'
+
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
 const getFirstStackLine = function (stack) {
@@ -101,6 +103,18 @@ test('New stack traces are created if none available', (t) => {
   error.stack = ''
   t.true(mergeErrorCause(error).stack.includes('at '))
 })
+
+if (hasAggregateErrors()) {
+  test('Aggregate errors get new stack traces', (t) => {
+    const innerError = new Error('innerError')
+    const error = new AggregateError([innerError], 'test')
+    const { stack } = error
+    t.is(
+      getFirstStackLine(mergeErrorCause(error).stack),
+      getFirstStackLine(stack),
+    )
+  })
+}
 
 test('error.stack is not enumerable', (t) => {
   const error = new Error('test')
