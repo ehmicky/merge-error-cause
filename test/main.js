@@ -13,3 +13,18 @@ each([undefined, null, '', new Set([])], ({ title }, error) => {
     t.true(mergeErrorCause(error) instanceof Error)
   })
 })
+
+test('Error cause is merged', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  t.is(mergeErrorCause(error).message, 'cause\ntest')
+})
+
+test('Error cause is merged deeply', (t) => {
+  const cause = new Error('cause')
+  // eslint-disable-next-line fp/no-mutation
+  cause.cause = new Error('innerCause')
+  const error = new Error('test')
+  error.cause = cause
+  t.is(mergeErrorCause(error).message, 'innerCause\ncause\ntest')
+})
