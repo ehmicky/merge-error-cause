@@ -1,6 +1,8 @@
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 
+const { propertyIsEnumerable: isEnum } = Object.prototype
+
 // `AggregateError` is not available in Node <15.0.0 and in some browsers
 const hasAggregateErrors = function () {
   try {
@@ -17,7 +19,9 @@ if (hasAggregateErrors()) {
     const cause = new Error('cause')
     const innerError = new Error('innerError', { cause })
     const error = new AggregateError([innerError], 'test')
-    t.is(mergeErrorCause(error).errors[0].message, 'cause\ninnerError')
+    const mergedError = mergeErrorCause(error)
+    t.is(mergedError.errors[0].message, 'cause\ninnerError')
+    t.false(isEnum.call(mergedError, 'errors'))
   })
 
   test('Merge cause in "errors" with "cause"', (t) => {
@@ -27,9 +31,10 @@ if (hasAggregateErrors()) {
     const error = new AggregateError([innerError], 'test', {
       cause: secondCause,
     })
-    const { errors, message } = mergeErrorCause(error)
-    t.is(message, 'secondCause\ntest')
-    t.is(errors[0].message, 'cause\ninnerError')
+    const mergedError = mergeErrorCause(error)
+    t.is(mergedError.message, 'secondCause\ntest')
+    t.is(mergedError.errors[0].message, 'cause\ninnerError')
+    t.false(isEnum.call(mergedError, 'errors'))
   })
 
   test('Normalize "errors"', (t) => {
