@@ -108,10 +108,13 @@ if (hasAggregateErrors()) {
   test('Aggregate errors get new stack traces', (t) => {
     const innerError = new Error('innerError')
     const error = new AggregateError([innerError], 'test')
+    const { stack: innerStack } = innerError
     const { stack } = error
+    const mergedError = mergeErrorCause(error)
+    t.is(getFirstStackLine(mergedError.stack), getFirstStackLine(stack))
     t.is(
-      getFirstStackLine(mergeErrorCause(error).stack),
-      getFirstStackLine(stack),
+      getFirstStackLine(mergedError.errors[0].stack),
+      getFirstStackLine(innerStack),
     )
   })
 }
