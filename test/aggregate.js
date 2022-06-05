@@ -48,3 +48,13 @@ if (hasAggregateErrors()) {
     t.is(mergeErrorCause(error).errors.length, 0)
   })
 }
+
+test('Merge cause in "errors" without "cause" nor AggregateError', (t) => {
+  const innerError = new Error('innerError')
+  // eslint-disable-next-line fp/no-mutation
+  innerError.cause = new Error('cause')
+  const error = new Error('test')
+  error.errors = [innerError]
+  const mergedError = mergeErrorCause(error)
+  t.is(mergedError.errors[0].message, 'cause\ninnerError')
+})
