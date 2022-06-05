@@ -237,7 +237,7 @@ try {
 }
 ```
 
-If the parent error message ends with `:`, it is printed first instead.
+If the parent error message ends with `:`, it is prepended instead.
 
 ```js
 try {
@@ -278,7 +278,7 @@ try {
 ```
 
 If the parent error type is `Error` or `AggregateError`, the child type is used
-instead. This allows wrapping error message or properties while keeping the
+instead. This allows wrapping the error message or properties while keeping its
 type.
 
 ```js
@@ -329,13 +329,12 @@ try {
 
 ## Aggregate errors
 
-If an error inside
-[an `AggregateError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError)
-has a `cause`, it will be processed. However, the `errors` are not merged with
+Any [`aggregateError.errors.*.cause`]
+(https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError)
+is processed recursively. However, `aggregateError.errors` are not merged with
 each other since those are different from each other.
 
-If both an error and its `error.cause` have an `errors` property, those are
-concatenated.
+If both an `error.errors` and `error.cause.errors` exist, they are concatenated.
 
 ## Normalization
 
