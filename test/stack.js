@@ -1,5 +1,6 @@
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
+import { each } from 'test-each'
 
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
@@ -34,15 +35,17 @@ test('Child stack trace is used deeply', (t) => {
   )
 })
 
-test('Invalid child stack traces are not used', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.cause.stack = ''
-  const { stack } = error
-  t.is(
-    getFirstStackLine(mergeErrorCause(error).stack),
-    getFirstStackLine(stack),
-  )
+each([undefined, '', 'invalid'], ({ title }, invalidStack) => {
+  test(`Invalid child stack traces are not used | ${title}`, (t) => {
+    const error = new Error('test')
+    error.cause = new Error('cause')
+    error.cause.stack = invalidStack
+    const { stack } = error
+    t.is(
+      getFirstStackLine(mergeErrorCause(error).stack),
+      getFirstStackLine(stack),
+    )
+  })
 })
 
 test('Invalid child stack traces are not used deeply', (t) => {
