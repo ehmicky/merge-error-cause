@@ -74,7 +74,9 @@ returned. Otherwise, a new `error` is created and returned.
 # Background
 
 [`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
-is a recent JavaScript feature to wrap errors:
+is a
+[recent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause#browser_compatibility)
+JavaScript feature to wrap error messages and properties:
 
 ```js
 try {
@@ -84,7 +86,6 @@ try {
 }
 ```
 
-It is a built-in convenient way to wrap the error message and properties.
 However, it comes with a few issues.
 
 ## Traversing `error.cause`
