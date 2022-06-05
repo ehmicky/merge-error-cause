@@ -49,3 +49,33 @@ test('Merge cause in "errors" without "cause" nor AggregateError', (t) => {
   const mergedError = mergeErrorCause(error)
   t.is(mergedError.errors[0].message, 'cause\ninnerError')
 })
+
+test('Does not set "errors" if none', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  t.false('errors' in mergeErrorCause(error))
+})
+
+test('Use child "errors" if no parent', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  error.cause.errors = [new Error('innerError')]
+  t.is(mergeErrorCause(error).errors[0].message, 'innerError')
+})
+
+test('Use parent "errors" if no child', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  error.errors = [new Error('innerError')]
+  t.is(mergeErrorCause(error).errors[0].message, 'innerError')
+})
+
+test('Concatenate "errors"', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  error.errors = [new Error('one')]
+  error.cause.errors = [new Error('two')]
+  t.is(mergeErrorCause(error).errors.length, 2)
+  t.is(mergeErrorCause(error).errors[0].message, 'two')
+  t.is(mergeErrorCause(error).errors[1].message, 'one')
+})
