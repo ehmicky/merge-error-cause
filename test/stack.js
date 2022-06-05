@@ -65,8 +65,8 @@ test('Invalid child stack traces are not used deeply', (t) => {
 test('Invalid child stack traces at the top are ignored', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
-  error.cause.cause = new Error('innerCause')
   error.stack = ''
+  error.cause.cause = new Error('innerCause')
   error.cause.stack = ''
   const { stack } = error.cause.cause
   t.is(
