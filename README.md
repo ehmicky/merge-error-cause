@@ -334,7 +334,7 @@ Any
 is processed recursively. However, `aggregateError.errors` are not merged with
 each other since those are different from each other.
 
-If both an `error.errors` and `error.cause.errors` exist, they are concatenated.
+If both `error.errors` and `error.cause.errors` exist, they are concatenated.
 
 ## Normalization
 
