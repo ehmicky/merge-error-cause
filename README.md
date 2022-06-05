@@ -33,10 +33,8 @@ _Return value_: `Error`
 
 `mergeErrorCause()` never throws.
 
-If `error` is an `Error` instance, it is returned. Any missing or invalid error
-property is directly modified.
-
-If it is not an `Error` instance, a new one is created and returned.
+If `error` is an `Error` instance and has a `cause`, it is returned. Otherwise,
+a new one is created and returned.
 
 # Support
 

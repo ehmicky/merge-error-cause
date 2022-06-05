@@ -31,7 +31,7 @@
     "cause",
     "error-reporting",
     "error-type",
-    "normalization",
+    "merge",
     "exceptions"
   ],
   "license": "Apache-2.0",
