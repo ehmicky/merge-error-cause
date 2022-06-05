@@ -102,14 +102,14 @@ try {
   createUser(userId)
 } catch (error) {
   if (error.code === 'E101' || (error.cause && error.cause.code === 'E101')) {
-    // Checking for properties require traversing `error.cause`
+    // Checking for properties requires traversing `error.cause`
   }
 
   if (
     error.name === 'UserError' ||
     (error.cause && error.cause.name === 'UserError')
   ) {
-    // Do does checking for error type
+    // So does checking for error type
   }
 }
 ```
@@ -122,8 +122,9 @@ This is tricky to get right. For example:
 
 ### Solution
 
-This library merges `error.cause` recursively. It also ensures `error` is an
-`Error` instance. Consumers can then handle errors without checking its `cause`.
+This library merges `error.cause` recursively. It also
+[ensures `error` is an `Error` instance](#normalization). Consumers can then
+handle errors without checking its `cause`.
 
 <!-- eslint-disable max-depth -->
 
@@ -223,7 +224,7 @@ callbacks, since parent stack traces are missing when using callbacks.
 
 ## Messages
 
-Error messages are wrapped from innermost to outermost.
+Child error messages are printed first.
 
 ```js
 try {
@@ -236,7 +237,7 @@ try {
 }
 ```
 
-If the parent error message ends with `:`, this is reversed.
+If the parent error message ends with `:`, it is printed first instead.
 
 ```js
 try {
