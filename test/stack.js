@@ -73,6 +73,19 @@ test('Invalid child stack traces at the top are ignored', (t) => {
   )
 })
 
+// eslint-disable-next-line unicorn/no-null
+each([null, 'message'], ({ title }, cause) => {
+  test(`Invalid errors stacks are not used | ${title}`, (t) => {
+    const error = new Error('test')
+    error.cause = cause
+    const { stack } = error
+    t.is(
+      getFirstStackLine(mergeErrorCause(error).stack),
+      getFirstStackLine(stack),
+    )
+  })
+})
+
 test('Plain object stack traces are used', (t) => {
   const error = new Error('test')
   const { stack } = new Error('cause')
