@@ -20,10 +20,23 @@ and
 ```js
 import mergeErrorCause from 'merge-error-cause'
 
-try {
-  doSomething()
-} catch (error) {
-  throw mergeErrorCause(error)
+const doSomething = function () {
+  try {
+    throw new Error('Invalid user id.')
+  } catch (cause) {
+    throw new Error('Could not create user.', { cause })
+  }
+}
+
+const main = function () {
+  try {
+    doSomething()
+  } catch (error) {
+    throw mergeErrorCause(error)
+    // Printed as:
+    //   Error: Invalid user id.
+    //   Could not create user.
+  }
 }
 ```
 
