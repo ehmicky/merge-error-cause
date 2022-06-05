@@ -74,3 +74,9 @@ if (hasAggregateErrors()) {
     t.is(errors[0].name, 'TypeError')
   })
 }
+
+test('New error name is reflected in stack', (t) => {
+  const error = new TypeError('test')
+  error.cause = new Error('cause')
+  t.true(mergeErrorCause(error).stack.includes('TypeError'))
+})
