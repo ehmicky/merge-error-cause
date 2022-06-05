@@ -20,24 +20,33 @@ and
 ```js
 import mergeErrorCause from 'merge-error-cause'
 
-const doSomething = function () {
+const main = function (userId) {
   try {
-    throw new Error('Invalid user id.')
+    return createUser(userId)
+  } catch (error) {
+    throw mergeErrorCause(error)
+    // Printed as:
+    //   Error: Invalid user id: false
+    //   Could not create user.
+  }
+}
+
+const createUser = function (userId) {
+  try {
+    validateUserId(userId)
+    return sendDatabaseRequest('create', userId)
   } catch (cause) {
     throw new Error('Could not create user.', { cause })
   }
 }
 
-const main = function () {
-  try {
-    doSomething()
-  } catch (error) {
-    throw mergeErrorCause(error)
-    // Printed as:
-    //   Error: Invalid user id.
-    //   Could not create user.
+const validateUserId = function (userId) {
+  if (typeof userId !== 'string') {
+    throw new TypeError(`Invalid user id: ${userId}.`)
   }
 }
+
+main(false)
 ```
 
 # Install
