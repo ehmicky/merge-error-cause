@@ -39,4 +39,4 @@
  * main(false)
  * ```
  */
-export default function mergeErrorCause(error: any): Error
+export default function mergeErrorCause(error: unknown): Error

@@ -1,8 +1,7 @@
 import mergeErrorCause from 'merge-error-cause'
 import { expectType, expectError } from 'tsd'
 
-const error = new Error('test')
-expectType<Error>(mergeErrorCause(error))
+expectType<Error>(mergeErrorCause(new Error('test')))
 mergeErrorCause(undefined)
 mergeErrorCause('test')
 
