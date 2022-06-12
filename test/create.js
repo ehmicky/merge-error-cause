@@ -1,3 +1,5 @@
+import { runInNewContext } from 'vm'
+
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
@@ -47,6 +49,11 @@ each(
             ChildError: AggregateError,
             name: 'TypeError',
           },
+          {
+            ParentError: runInNewContext('AggregateError'),
+            ChildError: TypeError,
+            name: 'TypeError',
+          },
         ]
       : []),
     { ParentError: Error, ChildError: TypeError, name: 'TypeError' },
@@ -54,6 +61,11 @@ each(
     { ParentError: TypeError, ChildError: RangeError, name: 'TypeError' },
     { ParentError: TestError, ChildError: RangeError, name: 'RangeError' },
     { ParentError: Error, ChildError: TestError, name: 'Error' },
+    {
+      ParentError: runInNewContext('Error'),
+      ChildError: TypeError,
+      name: 'TypeError',
+    },
   ],
   ({ title }, { ParentError, ChildError, name }) => {
     test(`Error types are merged | ${title}`, (t) => {

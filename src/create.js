@@ -32,21 +32,17 @@ const createCauseError = function (parent, child, message) {
   }
 }
 
-const isSimpleErrorType = function (error) {
-  return error.constructor === Error || isAggregateError(error)
-}
-
 const createSimpleErrorType = function (parent, child, message) {
   return isAggregateError(parent) || isAggregateError(child)
     ? new AggregateError([], message)
     : new Error(message)
 }
 
-// `AggregateError` is not available in Node <15.0.0 and in some browsers
+// Does not use global Error|AggregateError so this works cross-realm
+const isSimpleErrorType = function (error) {
+  return error.constructor.name === 'Error' || isAggregateError(error)
+}
+
 const isAggregateError = function (error) {
-  try {
-    return error.constructor === AggregateError
-  } catch {
-    return false
-  }
+  return error.constructor.name === 'AggregateError'
 }
