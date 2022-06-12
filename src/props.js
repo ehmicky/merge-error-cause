@@ -7,13 +7,8 @@ export const copyProps = function (mergedError, parent, child) {
 // Do not merge inherited properties nor non-enumerable properties.
 // Works with symbol properties.
 const mergeProps = function (mergedError, error) {
-  // eslint-disable-next-line guard-for-in, fp/no-loops
-  for (const propName in error) {
-    mergeProp(mergedError, error, propName)
-  }
-
   // eslint-disable-next-line fp/no-loops
-  for (const propName of Object.getOwnPropertySymbols(error)) {
+  for (const propName of Reflect.ownKeys(error)) {
     mergeProp(mergedError, error, propName)
   }
 }
