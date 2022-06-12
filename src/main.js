@@ -12,7 +12,7 @@ import { getStackIndex, fixStack } from './stack.js'
 
 // Merge `error.cause` recursively to a single error.
 // In Node <16.9.0 and in some browsers, `error.cause` requires a polyfill like
-// `error-cause`.
+// `error-cause-ponyfill`.
 export default function mergeErrorCause(error) {
   const stackIndex = getStackIndex(error)
   return mergeError(error, stackIndex)
