@@ -1,27 +1,17 @@
 import { runInNewContext } from 'vm'
 
 import test from 'ava'
+import errorType from 'error-type'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-// eslint-disable-next-line fp/no-class
-class TestError extends Error {
-  constructor(message, { testOpt }) {
-    super(message)
-
-    if (!testOpt) {
-      throw new Error('test')
-    }
+const testErrorHandler = function (_, { testOpt }) {
+  if (!testOpt) {
+    throw new Error('test')
   }
 }
 
-// eslint-disable-next-line fp/no-mutating-methods
-Object.defineProperty(TestError.prototype, 'name', {
-  value: 'TestError',
-  writable: true,
-  enumerable: false,
-  configurable: true,
-})
+const TestError = errorType('TestError', testErrorHandler)
 
 // eslint-disable-next-line fp/no-class
 class FakeAggregateError extends Error {}
