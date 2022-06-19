@@ -351,6 +351,17 @@ try {
 }
 ```
 
+# Related projects
+
+- [`modern-errors`](https://github.com/ehmicky/modern-errors): Handle errors
+  like it's 2022 🔮
+- [`error-type`](https://github.com/ehmicky/error-type): Create custom error
+  types
+- [`normalize-exception`](https://github.com/ehmicky/normalize-exception):
+  Normalize exceptions/errors
+- [`error-cause-polyfill`](https://github.com/ehmicky/error-cause-polyfill):
+  Polyfill `error.cause`
+
 # Support
 
 For any question, _don't hesitate_ to [submit an issue on GitHub](../../issues).
