@@ -2,8 +2,6 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-import { hasAggregateErrors } from './helpers/main.js'
-
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
 const isSameStack = function (t, stackA, stackB) {
@@ -87,7 +85,7 @@ test('New stack traces are created if none available', (t) => {
   t.true(mergeErrorCause(error).stack.includes('at '))
 })
 
-if (hasAggregateErrors()) {
+if ('AggregateError' in globalThis) {
   test('Aggregate errors get new stack traces', (t) => {
     const innerError = new Error('innerError')
     const error = new AggregateError([innerError], 'test')

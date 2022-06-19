@@ -4,8 +4,6 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-import { hasAggregateErrors } from './helpers/main.js'
-
 // eslint-disable-next-line fp/no-class
 class TestError extends Error {
   constructor(message, { testOpt }) {
@@ -22,7 +20,7 @@ class TestError extends Error {
 each(
   [
     { ParentError: Error, ChildError: Error, name: 'Error' },
-    ...(hasAggregateErrors()
+    ...('AggregateError' in globalThis
       ? [
           {
             ParentError: Error,
@@ -76,7 +74,7 @@ each(
   },
 )
 
-if (hasAggregateErrors()) {
+if ('AggregateError' in globalThis) {
   test('Aggregate errors get new types', (t) => {
     const innerError = new TypeError('innerError')
     const error = new RangeError('test')

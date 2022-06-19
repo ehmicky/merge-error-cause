@@ -1,11 +1,9 @@
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 
-import { hasAggregateErrors } from './helpers/main.js'
-
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
-if (hasAggregateErrors()) {
+if ('AggregateError' in globalThis) {
   test('Merge cause in "errors" without "cause"', (t) => {
     const cause = new Error('cause')
     const innerError = new Error('innerError', { cause })
