@@ -33,7 +33,8 @@ const createCauseError = function (parent, child, message) {
 }
 
 const createSimpleErrorType = function (parent, child, message) {
-  return isAggregateError(parent) || isAggregateError(child)
+  return (isAggregateError(parent) || isAggregateError(child)) &&
+    'AggregateError' in globalThis
     ? new AggregateError([], message)
     : new Error(message)
 }

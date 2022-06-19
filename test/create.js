@@ -8,14 +8,39 @@ import { each } from 'test-each'
 class TestError extends Error {
   constructor(message, { testOpt }) {
     super(message)
-    // eslint-disable-next-line fp/no-this, fp/no-mutation
-    this.name = 'TestError'
 
     if (!testOpt) {
       throw new Error('test')
     }
   }
 }
+
+// eslint-disable-next-line fp/no-mutating-methods
+Object.defineProperty(TestError.prototype, 'name', {
+  value: 'TestError',
+  writable: true,
+  enumerable: false,
+  configurable: true,
+})
+
+// eslint-disable-next-line fp/no-class
+class FakeAggregateError extends Error {}
+
+// eslint-disable-next-line fp/no-mutating-methods
+Object.defineProperty(FakeAggregateError.prototype, 'name', {
+  value: 'AggregateError',
+  writable: true,
+  enumerable: false,
+  configurable: true,
+})
+
+// eslint-disable-next-line fp/no-mutating-methods
+Object.defineProperty(FakeAggregateError, 'name', {
+  value: 'AggregateError',
+  writable: true,
+  enumerable: false,
+  configurable: true,
+})
 
 each(
   [
@@ -59,6 +84,11 @@ each(
     { ParentError: TypeError, ChildError: RangeError, name: 'TypeError' },
     { ParentError: TestError, ChildError: RangeError, name: 'RangeError' },
     { ParentError: Error, ChildError: TestError, name: 'Error' },
+    {
+      ParentError: FakeAggregateError,
+      ChildError: Error,
+      name: 'AggregateError' in globalThis ? 'AggregateError' : 'Error',
+    },
     {
       ParentError: runInNewContext('Error'),
       ChildError: TypeError,
