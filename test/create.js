@@ -12,25 +12,11 @@ const testErrorHandler = function (_, { testOpt }) {
 }
 
 const TestError = errorType('TestError', testErrorHandler)
-
-// eslint-disable-next-line fp/no-class
-class FakeAggregateError extends Error {}
-
-// eslint-disable-next-line fp/no-mutating-methods
-Object.defineProperty(FakeAggregateError.prototype, 'name', {
-  value: 'AggregateError',
-  writable: true,
-  enumerable: false,
-  configurable: true,
-})
-
-// eslint-disable-next-line fp/no-mutating-methods
-Object.defineProperty(FakeAggregateError, 'name', {
-  value: 'AggregateError',
-  writable: true,
-  enumerable: false,
-  configurable: true,
-})
+const FakeAggregateError = errorType('FakeAggregateError')
+// eslint-disable-next-line fp/no-mutation
+FakeAggregateError.name = 'AggregateError'
+// eslint-disable-next-line fp/no-mutation
+FakeAggregateError.prototype.name = 'AggregateError'
 
 each(
   [
