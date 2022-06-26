@@ -52,7 +52,7 @@
     "@ehmicky/dev-tasks": "^1.0.77",
     "error-type": "^1.1.10",
     "test-each": "^5.0.0",
-    "tsd": "^0.20.0"
+    "tsd": "^0.21.0"
   },
   "engines": {
     "node": ">=14.18.0"
