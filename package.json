@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^1.0.78",
-    "error-type": "^1.1.10",
+    "error-type": "^1.2.0",
     "test-each": "^5.0.0",
     "tsd": "^0.21.0"
   },
