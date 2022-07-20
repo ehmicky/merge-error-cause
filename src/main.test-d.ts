@@ -1,5 +1,6 @@
-import mergeErrorCause from 'merge-error-cause'
 import { expectType, expectError } from 'tsd'
+
+import mergeErrorCause from './main.js'
 
 expectType<Error>(mergeErrorCause(new Error('test')))
 mergeErrorCause(undefined)
