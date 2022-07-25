@@ -361,8 +361,8 @@ try {
   Normalize exceptions/errors
 - [`error-cause-polyfill`](https://github.com/ehmicky/error-cause-polyfill):
   Polyfill `error.cause`
-- [`handle-cli-error`](https://github.com/ehmicky/handle-cli-error): 💥 Error
-  handler for CLI applications
+- [`handle-cli-error`](https://github.com/ehmicky/handle-cli-error): 💣 Error
+  handler for CLI applications 💥
 
 # Support
 
