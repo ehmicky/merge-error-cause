@@ -35,7 +35,7 @@
     "exceptions"
   ],
   "license": "Apache-2.0",
-  "homepage": "https://bit.ly/3xzSPFK",
+  "homepage": "https://www.github.com/ehmicky/merge-error-cause",
   "repository": "ehmicky/merge-error-cause",
   "bugs": {
     "url": "https://github.com/ehmicky/merge-error-cause/issues"
