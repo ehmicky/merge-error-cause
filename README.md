@@ -357,6 +357,8 @@ try {
   like it's 2022 🔮
 - [`error-type`](https://github.com/ehmicky/error-type): Create custom error
   types
+- [`error-serializer`](https://github.com/ehmicky/error-serializer): Convert
+  errors to/from plain objects
 - [`normalize-exception`](https://github.com/ehmicky/normalize-exception):
   Normalize exceptions/errors
 - [`error-cause-polyfill`](https://github.com/ehmicky/error-cause-polyfill):
