@@ -1,3 +1,5 @@
+import type setErrorProps from 'set-error-props'
+
 type NormalizeError<ErrorArg> = ErrorArg extends Error ? ErrorArg : Error
 
 /**
@@ -43,4 +45,15 @@ type NormalizeError<ErrorArg> = ErrorArg extends Error ? ErrorArg : Error
  */
 export default function mergeErrorCause<ErrorArg>(
   error: ErrorArg,
-): Omit<NormalizeError<ErrorArg>, 'cause'>
+): Omit<
+  NormalizeError<ErrorArg>['cause'] extends object
+    ? ReturnType<
+        typeof setErrorProps<
+          NormalizeError<ErrorArg>,
+          NormalizeError<ErrorArg>['cause'],
+          { lowPriority: true }
+        >
+      >
+    : NormalizeError<ErrorArg>,
+  'cause'
+>
