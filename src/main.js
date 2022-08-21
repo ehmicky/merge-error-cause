@@ -4,7 +4,7 @@ import { mergeAggregateCauses, mergeAggregateErrors } from './aggregate.js'
 import { mergeMessage } from './message.js'
 import { copyProps } from './props.js'
 import { mergePrototype } from './prototype.js'
-import { getStack, hasGeneratedStack, fixStack } from './stack.js'
+import { getStack, hasStack, fixStack } from './stack.js'
 
 // Merge `error.cause` recursively to a single error.
 // In Node <16.9.0 and in some browsers, `error.cause` requires a polyfill like
@@ -27,33 +27,35 @@ const mergeError = function (error, parents) {
   const recurse = (innerError) => mergeError(innerError, [...parents, error])
   const stack = getStack(error)
   const errorA = normalizeException(error, { shallow: true })
-  const generatedStack = hasGeneratedStack(errorA, stack)
+  const parentHasStack = hasStack(errorA, stack)
 
   mergeAggregateCauses(errorA, recurse)
-  mergeCause(errorA, recurse)
-  return { error: errorA, generatedStack }
+  const childHasStack = mergeCause(errorA, recurse)
+  const errorHasStack = parentHasStack || childHasStack
+  return { error: errorA, errorHasStack }
 }
 
 // `normalizeException()` is called again to ensure the new `name|message` is
 // reflected in `error.stack`.
 const mergeCause = function (parent, recurse) {
   if (parent.cause === undefined) {
-    return
+    return false
   }
 
-  const { error: child, generatedStack } = recurse(parent.cause)
+  const { error: child, errorHasStack: childHasStack } = recurse(parent.cause)
   // eslint-disable-next-line fp/no-delete, no-param-reassign
   delete parent.cause
-  mergeChild(parent, child, generatedStack)
+  mergeChild(parent, child, childHasStack)
+  return childHasStack
 }
 
-const mergeChild = function (parent, child, generatedStack) {
+const mergeChild = function (parent, child, childHasStack) {
   if (child === undefined) {
     return
   }
 
   mergeMessage(parent, child)
-  fixStack(parent, child, generatedStack)
+  fixStack(parent, child, childHasStack)
   mergeAggregateErrors(parent, child)
   copyProps(parent, child)
   mergePrototype(parent, child)

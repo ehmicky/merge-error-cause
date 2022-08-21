@@ -70,10 +70,10 @@ test('Invalid child stack traces are not used deeply', (t) => {
 
 test('Invalid child stack traces at the top are ignored', (t) => {
   const error = new Error('test')
-  error.cause = new Error('cause')
   error.stack = ''
-  error.cause.cause = new Error('innerCause')
+  error.cause = new Error('cause')
   error.cause.stack = ''
+  error.cause.cause = new Error('innerCause')
   const { stack } = error.cause.cause
   mergeErrorCause(error)
   isSameStack(t, error.stack, stack)
