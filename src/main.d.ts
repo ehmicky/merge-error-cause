@@ -2,6 +2,19 @@ import type setErrorProps from 'set-error-props'
 
 type NormalizeError<ErrorArg> = ErrorArg extends Error ? ErrorArg : Error
 
+type SetErrorProps<ErrorArg, Cause extends object> = ReturnType<
+  typeof setErrorProps<ErrorArg, Cause, { lowPriority: true }>
+>
+
+type MergeErrorCause<ErrorArg> = 'cause' extends keyof ErrorArg
+  ? Omit<
+      ErrorArg['cause'] extends object
+        ? SetErrorProps<NormalizeError<ErrorArg>, ErrorArg['cause']>
+        : NormalizeError<ErrorArg>,
+      'cause'
+    >
+  : NormalizeError<ErrorArg>
+
 /**
  * This merges
  * [`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
@@ -45,15 +58,4 @@ type NormalizeError<ErrorArg> = ErrorArg extends Error ? ErrorArg : Error
  */
 export default function mergeErrorCause<ErrorArg>(
   error: ErrorArg,
-): Omit<
-  NormalizeError<ErrorArg>['cause'] extends object
-    ? ReturnType<
-        typeof setErrorProps<
-          NormalizeError<ErrorArg>,
-          NormalizeError<ErrorArg>['cause'],
-          { lowPriority: true }
-        >
-      >
-    : NormalizeError<ErrorArg>,
-  'cause'
->
+): MergeErrorCause<ErrorArg>
