@@ -28,6 +28,7 @@ const mergeError = function (error, parents) {
   const stack = getStack(error)
   const errorA = normalizeException(error, { shallow: true })
   const generatedStack = hasGeneratedStack(errorA, stack)
+
   mergeAggregateCauses(errorA, recurse)
   mergeCause(errorA, recurse)
   return { error: errorA, generatedStack }

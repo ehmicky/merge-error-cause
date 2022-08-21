@@ -36,11 +36,21 @@ test('Child stack trace is used deeply', (t) => {
   isSameStack(t, error.stack, stack)
 })
 
-each([undefined, '', 'invalid'], ({ title }, invalidStack) => {
+// eslint-disable-next-line unicorn/no-null
+each([undefined, null, true, ''], ({ title }, invalidStack) => {
   test(`Invalid child stack traces are not used | ${title}`, (t) => {
     const error = new Error('test')
     error.cause = new Error('cause')
     error.cause.stack = invalidStack
+    const { stack } = error
+    mergeErrorCause(error)
+    const { stack: newStack } = error
+    isSameStack(t, newStack, stack)
+  })
+
+  test(`Invalid errors' stacks are not used | ${title}`, (t) => {
+    const error = new Error('test')
+    error.cause = { stack: invalidStack }
     const { stack } = error
     mergeErrorCause(error)
     const { stack: newStack } = error
@@ -67,18 +77,6 @@ test('Invalid child stack traces at the top are ignored', (t) => {
   const { stack } = error.cause.cause
   mergeErrorCause(error)
   isSameStack(t, error.stack, stack)
-})
-
-// eslint-disable-next-line unicorn/no-null
-each([null, ''], ({ title }, causeStack) => {
-  test(`Invalid errors' stacks are not used | ${title}`, (t) => {
-    const error = new Error('test')
-    error.cause = { stack: causeStack }
-    const { stack } = error
-    mergeErrorCause(error)
-    const { stack: newStack } = error
-    isSameStack(t, newStack, stack)
-  })
 })
 
 test("Plain objects' stack traces are used", (t) => {

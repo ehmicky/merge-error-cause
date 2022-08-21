@@ -5,9 +5,9 @@ export const hasGeneratedStack = function (error, stack) {
   return getStack(error) !== stack
 }
 
-// Retrieve `error.stack`
+// Retrieve `error.stack`.
 // Errors can be plain objects with a `stack` property, which is handled by
-// `normalize-exception`
+// `normalize-exception`.
 export const getStack = function (error) {
   return typeof error === 'object' && error !== null ? error.stack : undefined
 }
