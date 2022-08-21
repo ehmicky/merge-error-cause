@@ -16,7 +16,9 @@ export const mergeAggregateCauses = function (parent, recurse) {
     return
   }
 
-  const errors = parent.errors.map(recurse).filter(Boolean)
+  const errors = parent.errors
+    .map((error) => recurse(error).error)
+    .filter(Boolean)
   setErrorProperty(parent, 'errors', errors)
 }
 

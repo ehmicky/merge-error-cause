@@ -70,10 +70,10 @@ test('Invalid child stack traces at the top are ignored', (t) => {
 })
 
 // eslint-disable-next-line unicorn/no-null
-each([null, 'message'], ({ title }, cause) => {
+each([null, ''], ({ title }, causeStack) => {
   test(`Invalid errors' stacks are not used | ${title}`, (t) => {
     const error = new Error('test')
-    error.cause = cause
+    error.cause = { stack: causeStack }
     const { stack } = error
     mergeErrorCause(error)
     const { stack: newStack } = error
