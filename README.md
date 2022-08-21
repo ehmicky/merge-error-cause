@@ -26,7 +26,7 @@ const main = function (userId) {
   } catch (error) {
     throw mergeErrorCause(error)
     // Printed as:
-    //   Error: Invalid user id: false
+    //   TypeError: Invalid user id: false
     //   Could not create user.
   }
 }
@@ -197,7 +197,7 @@ concatenated by default from innermost to outermost. This results in much
 simpler stack traces without losing any information.
 
 ```
-Error: User "15" does not exist.
+TypeError: User "15" does not exist.
 Invalid user.
 Could not create user.
 Could not create user group.
@@ -274,6 +274,30 @@ try {
   const mergedError = mergeErrorCause(error)
   console.log(mergedError instanceof UserError) // true
   console.log(mergedError.name) // 'UserError'
+}
+```
+
+If the parent error type is `Error`, the child type is used instead. This allows
+wrapping the error message or properties while keeping its type.
+
+```js
+try {
+  throw new TypeError('User id is not a string.')
+} catch (cause) {
+  const error = new Error('Could not create user.', { cause })
+  console.log(mergeErrorCause(error) instanceof TypeError) // true
+}
+```
+
+`error.wrap: true` has the same effect, but works with any parent error type.
+
+```js
+try {
+  throw new TypeError('User id is not a string.')
+} catch (cause) {
+  const error = new AnyError('Could not create user.', { cause })
+  error.wrap = true
+  console.log(mergeErrorCause(error) instanceof TypeError) // true
 }
 ```
 

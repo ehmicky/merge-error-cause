@@ -16,7 +16,7 @@
  *   } catch (error) {
  *     throw mergeErrorCause(error)
  *     // Printed as:
- *     //   Error: Invalid user id: false
+ *     //   TypeError: Invalid user id: false
  *     //   Could not create user.
  *   }
  * }
