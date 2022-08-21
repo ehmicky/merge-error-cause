@@ -36,3 +36,30 @@ test('Error cause is merged deeply', (t) => {
   mergeErrorCause(error)
   t.is(error.message, 'innerCause\ncause\ntest')
 })
+
+test('Handle cause cycles', (t) => {
+  const error = new Error('test')
+  error.cause = error
+  mergeErrorCause(error)
+  t.false('cause' in error)
+  t.is(error.message, 'test')
+})
+
+test('Handle aggregate errors cycles', (t) => {
+  const error = new Error('test')
+  error.errors = [error]
+  mergeErrorCause(error)
+  t.is(error.errors.length, 0)
+  t.is(error.message, 'test')
+})
+
+test('Handle cause and aggregate errors cycles', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  error.cause.errors = [new Error('innerCause'), error]
+  error.cause.errors[0].cause = error
+  mergeErrorCause(error)
+  t.is(error.message, 'cause\ntest')
+  t.is(error.errors.length, 1)
+  t.is(error.errors[0].message, 'innerCause')
+})
