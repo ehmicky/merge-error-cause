@@ -4,23 +4,19 @@ import mergeErrorCause from 'merge-error-cause'
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
 test('Merge cause in "errors" without "cause"', (t) => {
-  const innerError = new Error('innerError')
-  // eslint-disable-next-line fp/no-mutation
-  innerError.cause = new Error('cause')
   const error = new Error('test')
-  error.errors = [innerError]
+  error.errors = [new Error('innerError')]
+  error.errors[0].cause = new Error('cause')
   mergeErrorCause(error)
   t.is(error.message, 'test')
   t.is(error.errors[0].message, 'cause\ninnerError')
 })
 
 test('Merge cause in "errors" with "cause"', (t) => {
-  const innerError = new Error('innerError')
-  // eslint-disable-next-line fp/no-mutation
-  innerError.cause = new Error('cause')
   const error = new Error('test')
-  error.errors = [innerError]
+  error.errors = [new Error('innerError')]
   error.cause = new Error('secondCause')
+  error.errors[0].cause = new Error('cause')
   mergeErrorCause(error)
   t.is(error.message, 'secondCause\ntest')
   t.is(error.errors[0].message, 'cause\ninnerError')
@@ -39,13 +35,6 @@ test('Use child "errors" if no parent', (t) => {
   error.cause.errors = [new Error('innerError')]
   mergeErrorCause(error)
   t.is(error.errors[0].message, 'innerError')
-})
-
-test('Keep "errors" non-enumerable', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.cause.errors = [new Error('innerError')]
-  mergeErrorCause(error)
   t.false(isEnum.call(error, 'errors'))
 })
 
