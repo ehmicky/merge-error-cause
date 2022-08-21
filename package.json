@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "normalize-exception": "^2.2.0",
-    "set-error-props": "^1.0.0"
+    "set-error-props": "^1.0.1"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^1.0.85",
