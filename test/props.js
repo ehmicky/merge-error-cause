@@ -45,24 +45,3 @@ test('Inherited error properties are not merged', (t) => {
   mergeErrorCause(error)
   t.false('testFunc' in error)
 })
-
-test('Error properties descriptors are kept', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  const descriptor = {
-    get: getProp,
-    set: setProp,
-    enumerable: true,
-    configurable: false,
-  }
-  // eslint-disable-next-line fp/no-mutating-methods
-  Object.defineProperty(error.cause, 'prop', descriptor)
-  mergeErrorCause(error)
-  t.deepEqual(Object.getOwnPropertyDescriptor(error, 'prop'), descriptor)
-})
-
-const getProp = function () {
-  return true
-}
-
-const setProp = function () {}
