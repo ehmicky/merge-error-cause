@@ -1,21 +1,21 @@
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 
-test('Parent name is kept', (t) => {
+test('Parent class is kept', (t) => {
   const error = new TypeError('test')
   error.cause = new RangeError('cause')
   mergeErrorCause(error)
   t.is(error.name, 'TypeError')
 })
 
-test('Parent name is kept in stack', (t) => {
+test('Parent class is kept in stack', (t) => {
   const error = new TypeError('test')
   error.cause = new RangeError('cause')
   mergeErrorCause(error)
   t.true(error.stack.includes('TypeError'))
 })
 
-test("Aggregate errors' names are kept", (t) => {
+test("Aggregate errors' classes are kept", (t) => {
   const error = new TypeError('test')
   error.cause = new Error('cause')
   error.cause.errors = [new RangeError('innerError')]
@@ -24,14 +24,14 @@ test("Aggregate errors' names are kept", (t) => {
   t.is(error.errors[0].name, 'RangeError')
 })
 
-test('Child name is used if parent is Error', (t) => {
+test('Child class is used if parent is Error', (t) => {
   const error = new Error('test')
   error.cause = new RangeError('cause')
   mergeErrorCause(error)
   t.is(error.name, 'RangeError')
 })
 
-test('Child name is used if parent.wrap true', (t) => {
+test('Child class is used if parent.wrap true', (t) => {
   const error = new TypeError('test')
   error.cause = new RangeError('cause')
   error.wrap = true
@@ -39,7 +39,7 @@ test('Child name is used if parent.wrap true', (t) => {
   t.is(error.name, 'RangeError')
 })
 
-test('Child name is not used if parent.wrap false', (t) => {
+test('Child class is not used if parent.wrap false', (t) => {
   const error = new TypeError('test')
   error.cause = new RangeError('cause')
   error.wrap = false
@@ -56,7 +56,7 @@ class TestError extends Error {
   }
 }
 
-test('Child name is used even if not set on prototype', (t) => {
+test('Child class is used even if name not set on prototype', (t) => {
   const error = new Error('test')
   error.cause = new TestError('cause')
   mergeErrorCause(error)
@@ -72,7 +72,7 @@ test('Child constructor is used even if set as parent own property', (t) => {
   t.is(error.name, 'TestError')
 })
 
-test('New name is updated in stack', (t) => {
+test('New class is updated in stack', (t) => {
   const error = new Error('test')
   error.cause = new RangeError('cause')
   error.cause.stack = ''

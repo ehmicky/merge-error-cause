@@ -107,7 +107,7 @@ try {
     error.name === 'UserError' ||
     (error.cause && error.cause.name === 'UserError')
   ) {
-    // So does checking for error type
+    // So does checking for error class
   }
 }
 ```
@@ -262,9 +262,9 @@ try {
 }
 ```
 
-## Error type
+## Error class
 
-The outer error type is used.
+The outer error class is used.
 
 ```js
 try {
@@ -277,8 +277,8 @@ try {
 }
 ```
 
-If the parent error type is `Error`, the child type is used instead. This allows
-wrapping the error message or properties while keeping its type.
+If the parent error class is `Error`, the child class is used instead. This
+allows wrapping the error message or properties while keeping its class.
 
 ```js
 try {
@@ -289,7 +289,7 @@ try {
 }
 ```
 
-`error.wrap: true` has the same effect, but works with any parent error type.
+`error.wrap: true` has the same effect, but works with any parent error class.
 
 ```js
 try {
@@ -359,8 +359,8 @@ try {
 - [`modern-errors`](https://github.com/ehmicky/modern-errors): Handle errors
   like it's 2022 🔮
 - [`create-error-types`](https://github.com/ehmicky/create-error-types): Create
-  multiple error types
-- [`error-type`](https://github.com/ehmicky/error-type): Create one error type
+  multiple error classes
+- [`error-type`](https://github.com/ehmicky/error-type): Create one error class
 - [`error-serializer`](https://github.com/ehmicky/error-serializer): Convert
   errors to/from plain objects
 - [`normalize-exception`](https://github.com/ehmicky/normalize-exception):

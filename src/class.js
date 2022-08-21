@@ -1,12 +1,12 @@
-// Allow parent to re-use child's error type if either:
-//  - Parent type is generic `Error`
+// Allow parent to re-use child's error class if either:
+//  - Parent class is generic `Error`
 //  - Parent as property `wrap: true`
 // We do this by setting `parent.__proto__` to `child.__proto__`
 //  - This might create some issues due to parent having a prototype from a
 //    class, but not having called its constructor.
 //     - For `Error`, this is very rare though.
-export const mergePrototype = function (parent, child) {
-  if (!shouldMergePrototype(parent)) {
+export const mergeClass = function (parent, child) {
+  if (!shouldMergeClass(parent)) {
     return
   }
 
@@ -15,7 +15,7 @@ export const mergePrototype = function (parent, child) {
   fixPrototypeProps(parent, child)
 }
 
-const shouldMergePrototype = function ({ name, wrap }) {
+const shouldMergeClass = function ({ name, wrap }) {
   return name === 'Error' || wrap === true
 }
 

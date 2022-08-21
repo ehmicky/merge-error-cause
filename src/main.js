@@ -1,9 +1,9 @@
 import normalizeException from 'normalize-exception'
 
 import { mergeAggregateCauses, mergeAggregateErrors } from './aggregate.js'
+import { mergeClass } from './class.js'
 import { mergeMessage } from './message.js'
 import { copyProps } from './props.js'
-import { mergePrototype } from './prototype.js'
 import { getStack, hasStack, fixStack } from './stack.js'
 
 // Merge `error.cause` recursively to a single error.
@@ -57,5 +57,5 @@ const mergeChild = function (parent, child, childHasStack) {
   fixStack(parent, child, childHasStack)
   mergeAggregateErrors(parent, child)
   copyProps(parent, child)
-  mergePrototype(parent, child)
+  mergeClass(parent, child)
 }
