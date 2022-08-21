@@ -5,7 +5,6 @@ import {
   getAggregateErrors,
   mergeAggregate,
 } from './aggregate.js'
-import { createError } from './create.js'
 import { mergeMessage } from './message.js'
 import { copyProps } from './props.js'
 import { getStackIndex, fixStack } from './stack.js'
@@ -40,9 +39,24 @@ const mergeError = function (error, stackIndex) {
 const mergeCause = function (parent, parentErrors, stackIndex) {
   const child = mergeError(parent.cause, stackIndex - 1)
   const message = mergeMessage(parent.message, child.message)
-  const mergedError = createError(parent, child, message)
+  const mergedError = createError(parent, message)
   fixStack({ mergedError, parent, child, stackIndex })
   mergeAggregate({ mergedError, parentErrors, child, mergeErrorCause })
   copyProps(mergedError, parent, child)
   return normalizeException(mergedError)
+}
+
+// Ensure both the prototype and `error.name` are correct, by creating a new
+// instance with the right constructor.
+// The parent error's type is kept.
+//  - Unless its constructor throws, then we default to Error.
+const createError = function (parent, message) {
+  try {
+    return parent.constructor.name === 'AggregateError' &&
+      'AggregateError' in globalThis
+      ? new parent.constructor([], message)
+      : new parent.constructor(message)
+  } catch {
+    return new Error(message)
+  }
 }
