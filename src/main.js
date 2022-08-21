@@ -10,8 +10,7 @@ import { getStack, hasStack, fixStack } from './stack.js'
 // In Node <16.9.0 and in some browsers, `error.cause` requires a polyfill like
 // `error-cause-ponyfill`.
 export default function mergeErrorCause(error) {
-  const { error: errorA } = mergeError(error, [])
-  return errorA
+  return mergeError(error, []).error
 }
 
 // The recursion is applied pair by pair, as opposed to all errors at once.
