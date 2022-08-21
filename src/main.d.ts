@@ -39,4 +39,6 @@
  * main(false)
  * ```
  */
-export default function mergeErrorCause(error: unknown): Omit<Error, 'cause'>
+export default function mergeErrorCause<ErrorArg>(
+  error: ErrorArg,
+): Omit<ErrorArg, 'cause'>
