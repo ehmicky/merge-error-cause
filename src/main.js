@@ -3,6 +3,7 @@ import normalizeException from 'normalize-exception'
 import { mergeAggregateCauses, mergeAggregateErrors } from './aggregate.js'
 import { mergeMessage } from './message.js'
 import { copyProps } from './props.js'
+import { mergePrototype } from './prototype.js'
 import { getStackIndex, fixStack } from './stack.js'
 
 // Merge `error.cause` recursively to a single error.
@@ -34,11 +35,14 @@ const mergeCause = function (parent, stackIndex) {
   const child = mergeError(parent.cause, stackIndex - 1)
   // eslint-disable-next-line fp/no-delete, no-param-reassign
   delete parent.cause
+  mergeChild(parent, child, stackIndex)
+  return normalizeException(parent)
+}
 
+const mergeChild = function (parent, child, stackIndex) {
   mergeMessage(parent, child)
   fixStack(parent, child, stackIndex)
   mergeAggregateErrors(parent, child)
   copyProps(parent, child)
-
-  return normalizeException(parent)
+  mergePrototype(parent, child)
 }
