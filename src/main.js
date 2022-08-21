@@ -29,33 +29,34 @@ const mergeError = function (error, parents) {
   const parentHasStack = hasStack(errorA, stack)
 
   mergeAggregateCauses(errorA, recurse)
-  const childHasStack = mergeCause(errorA, recurse)
+  const { parent: errorB, childHasStack } = mergeCause(errorA, recurse)
   const errorHasStack = parentHasStack || childHasStack
-  return { error: errorA, errorHasStack }
+  return { error: errorB, errorHasStack }
 }
 
 // `normalizeException()` is called again to ensure the new `name|message` is
 // reflected in `error.stack`.
 const mergeCause = function (parent, recurse) {
   if (parent.cause === undefined) {
-    return false
+    return { parent, childHasStack: false }
   }
 
   const { error: child, errorHasStack: childHasStack } = recurse(parent.cause)
   // eslint-disable-next-line fp/no-delete, no-param-reassign
   delete parent.cause
-  mergeChild(parent, child, childHasStack)
-  return childHasStack
+  const parentA = mergeChild(parent, child, childHasStack)
+  return { parent: parentA, childHasStack }
 }
 
 const mergeChild = function (parent, child, childHasStack) {
   if (child === undefined) {
-    return
+    return parent
   }
 
   mergeMessage(parent, child)
   fixStack(parent, child, childHasStack)
   mergeAggregateErrors(parent, child)
-  setErrorProps(parent, child, { lowPriority: true })
-  mergeClass(parent, child)
+  const parentA = setErrorProps(parent, child, { lowPriority: true })
+  mergeClass(parentA, child)
+  return parentA
 }
