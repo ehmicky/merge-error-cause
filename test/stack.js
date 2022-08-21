@@ -19,18 +19,27 @@ const isStackLine = function (line) {
   return line.trim().startsWith('at ')
 }
 
-test('Child stack trace is used', (t) => {
+const getVeryDeepError = function () {
+  const error = getDeepError()
+  error.cause.cause = new Error('innerCause')
+  return error
+}
+
+const getDeepError = function () {
   const error = new Error('test')
   error.cause = new Error('cause')
+  return error
+}
+
+test('Child stack trace is used', (t) => {
+  const error = getDeepError()
   const { stack } = error.cause
   mergeErrorCause(error)
   isSameStack(t, error.stack, stack)
 })
 
 test('Child stack trace is used deeply', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.cause.cause = new Error('innerCause')
+  const error = getVeryDeepError()
   const { stack } = error.cause.cause
   mergeErrorCause(error)
   isSameStack(t, error.stack, stack)
@@ -39,8 +48,7 @@ test('Child stack trace is used deeply', (t) => {
 // eslint-disable-next-line unicorn/no-null
 each([undefined, null, true, ''], ({ title }, invalidStack) => {
   test(`Invalid child stack traces are not used | ${title}`, (t) => {
-    const error = new Error('test')
-    error.cause = new Error('cause')
+    const error = getDeepError()
     error.cause.stack = invalidStack
     const { stack } = error
     mergeErrorCause(error)
@@ -58,30 +66,33 @@ each([undefined, null, true, ''], ({ title }, invalidStack) => {
   })
 })
 
-test('Invalid child stack traces are not used deeply', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.cause.cause = new Error('innerCause')
+test('Invalid child stack traces at the bottom are ignored', (t) => {
+  const error = getVeryDeepError()
   error.cause.cause.stack = ''
   const { stack } = error.cause
   mergeErrorCause(error)
   isSameStack(t, error.stack, stack)
 })
 
-test('Invalid child stack traces at the top are ignored', (t) => {
-  const error = new Error('test')
-  error.stack = ''
-  error.cause = new Error('cause')
+test('Invalid child stack traces at the center are ignored', (t) => {
+  const error = getVeryDeepError()
   error.cause.stack = ''
-  error.cause.cause = new Error('innerCause')
+  const { stack } = error.cause.cause
+  mergeErrorCause(error)
+  isSameStack(t, error.stack, stack)
+})
+
+test('Invalid child stack traces at the top are ignored', (t) => {
+  const error = getVeryDeepError()
+  error.stack = ''
   const { stack } = error.cause.cause
   mergeErrorCause(error)
   isSameStack(t, error.stack, stack)
 })
 
 test("Plain objects' stack traces are used", (t) => {
-  const error = new Error('test')
-  const { stack } = new Error('cause')
+  const error = getDeepError()
+  const { stack } = error.cause
   error.cause = { stack }
   mergeErrorCause(error)
   isSameStack(t, error.stack, stack)
@@ -111,8 +122,7 @@ test('Aggregate errors have separate stack traces', (t) => {
 })
 
 test('error.stack is not enumerable', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
+  const error = getDeepError()
   mergeErrorCause(error)
   t.false(isEnum.call(error, 'stack'))
 })
