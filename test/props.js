@@ -5,14 +5,16 @@ test('Child error properties are merged', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
   error.cause.prop = true
-  t.true(mergeErrorCause(error).prop)
+  mergeErrorCause(error)
+  t.true(error.prop)
 })
 
 test('Parent error properties are merged', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
   error.prop = true
-  t.true(mergeErrorCause(error).prop)
+  mergeErrorCause(error)
+  t.true(error.prop)
 })
 
 test('Parent error properties are merged with priority', (t) => {
@@ -20,7 +22,8 @@ test('Parent error properties are merged with priority', (t) => {
   error.cause = new Error('cause')
   error.prop = true
   error.cause.prop = false
-  t.true(mergeErrorCause(error).prop)
+  mergeErrorCause(error)
+  t.true(error.prop)
 })
 
 test('Symbol error properties are merged', (t) => {
@@ -28,7 +31,8 @@ test('Symbol error properties are merged', (t) => {
   error.cause = new Error('cause')
   const symbol = Symbol('prop')
   error.cause[symbol] = true
-  t.true(mergeErrorCause(error)[symbol])
+  mergeErrorCause(error)
+  t.true(error[symbol])
 })
 
 test('Inherited error properties are not merged', (t) => {
@@ -38,7 +42,8 @@ test('Inherited error properties are not merged', (t) => {
   }
   const error = new TypeError('test')
   error.cause = new TestError('cause')
-  t.false('testFunc' in mergeErrorCause(error))
+  mergeErrorCause(error)
+  t.false('testFunc' in error)
 })
 
 test('Error properties descriptors are kept', (t) => {
@@ -52,10 +57,8 @@ test('Error properties descriptors are kept', (t) => {
   }
   // eslint-disable-next-line fp/no-mutating-methods
   Object.defineProperty(error.cause, 'prop', descriptor)
-  t.deepEqual(
-    Object.getOwnPropertyDescriptor(mergeErrorCause(error), 'prop'),
-    descriptor,
-  )
+  mergeErrorCause(error)
+  t.deepEqual(Object.getOwnPropertyDescriptor(error, 'prop'), descriptor)
 })
 
 const getProp = function () {

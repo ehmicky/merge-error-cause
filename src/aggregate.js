@@ -11,43 +11,23 @@ import { setErrorProperty } from './set.js'
 //       - Those could lead to confusing stack traces
 // - I.e. it is the responsibility of the consumers to recurse and handle
 //   `error.errors`
-export const mergeAggregate = function ({
-  mergedError,
-  parentErrors,
-  child,
-  mergeErrorCause,
-}) {
-  const childErrors = getAggregateErrors(child, mergeErrorCause)
-
-  if (parentErrors === undefined && childErrors === undefined) {
+export const mergeAggregateCauses = function (parent, mergeErrorCause) {
+  if (parent.errors === undefined) {
     return
   }
 
-  const errors = getMergedErrors(parentErrors, childErrors)
-  setErrorProperty(mergedError, 'errors', errors)
+  const errors = parent.errors.map(mergeErrorCause)
+  setErrorProperty(parent, 'errors', errors)
 }
 
-export const getAggregateErrors = function (error, mergeErrorCause) {
-  return Array.isArray(error.errors)
-    ? error.errors.map(mergeErrorCause)
-    : undefined
-}
-
-const getMergedErrors = function (parentErrors, childErrors) {
-  if (parentErrors === undefined) {
-    return childErrors
+export const mergeAggregateErrors = function (parent, child) {
+  if (child.errors === undefined) {
+    return
   }
 
-  if (childErrors === undefined) {
-    return parentErrors
-  }
-
-  return [...childErrors, ...parentErrors]
-}
-
-// Set `error.errors` when there are no `error.cause.errors`
-export const setAggregate = function (parent, parentErrors) {
-  if (parentErrors !== undefined) {
-    setErrorProperty(parent, 'errors', parentErrors)
-  }
+  const errors =
+    parent.errors === undefined
+      ? child.errors
+      : [...child.errors, ...parent.errors]
+  setErrorProperty(parent, 'errors', errors)
 }

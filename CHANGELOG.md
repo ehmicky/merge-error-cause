@@ -2,6 +2,8 @@
 
 ## Breaking changes
 
+- The argument is now directly modified, providing it is an `Error` instance.
+  Otherwise, a new `error` is created then returned.
 - The outer error type is [now always used](README.md#error-type)
 
 # 1.3.0

@@ -22,7 +22,8 @@ test('Child stack trace is used', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
   const { stack } = error.cause
-  isSameStack(t, mergeErrorCause(error).stack, stack)
+  mergeErrorCause(error)
+  isSameStack(t, error.stack, stack)
 })
 
 test('Child stack trace is used deeply', (t) => {
@@ -30,7 +31,8 @@ test('Child stack trace is used deeply', (t) => {
   error.cause = new Error('cause')
   error.cause.cause = new Error('innerCause')
   const { stack } = error.cause.cause
-  isSameStack(t, mergeErrorCause(error).stack, stack)
+  mergeErrorCause(error)
+  isSameStack(t, error.stack, stack)
 })
 
 each([undefined, '', 'invalid'], ({ title }, invalidStack) => {
@@ -39,7 +41,9 @@ each([undefined, '', 'invalid'], ({ title }, invalidStack) => {
     error.cause = new Error('cause')
     error.cause.stack = invalidStack
     const { stack } = error
-    isSameStack(t, mergeErrorCause(error).stack, stack)
+    mergeErrorCause(error)
+    const { stack: newStack } = error
+    isSameStack(t, newStack, stack)
   })
 })
 
@@ -49,7 +53,8 @@ test('Invalid child stack traces are not used deeply', (t) => {
   error.cause.cause = new Error('innerCause')
   error.cause.cause.stack = ''
   const { stack } = error.cause
-  isSameStack(t, mergeErrorCause(error).stack, stack)
+  mergeErrorCause(error)
+  isSameStack(t, error.stack, stack)
 })
 
 test('Invalid child stack traces at the top are ignored', (t) => {
@@ -59,46 +64,56 @@ test('Invalid child stack traces at the top are ignored', (t) => {
   error.cause.cause = new Error('innerCause')
   error.cause.stack = ''
   const { stack } = error.cause.cause
-  isSameStack(t, mergeErrorCause(error).stack, stack)
+  mergeErrorCause(error)
+  isSameStack(t, error.stack, stack)
 })
 
 // eslint-disable-next-line unicorn/no-null
 each([null, 'message'], ({ title }, cause) => {
-  test(`Invalid errors stacks are not used | ${title}`, (t) => {
+  test(`Invalid errors' stacks are not used | ${title}`, (t) => {
     const error = new Error('test')
     error.cause = cause
     const { stack } = error
-    isSameStack(t, mergeErrorCause(error).stack, stack)
+    mergeErrorCause(error)
+    const { stack: newStack } = error
+    isSameStack(t, newStack, stack)
   })
 })
 
-test('Plain object stack traces are used', (t) => {
+test("Plain objects' stack traces are used", (t) => {
   const error = new Error('test')
   const { stack } = new Error('cause')
   error.cause = { stack }
-  isSameStack(t, mergeErrorCause(error).stack, stack)
+  mergeErrorCause(error)
+  isSameStack(t, error.stack, stack)
 })
 
 test('New stack traces are created if none available', (t) => {
   const error = new Error('test')
   error.stack = ''
-  t.true(mergeErrorCause(error).stack.includes('at '))
+  mergeErrorCause(error)
+  t.true(error.stack.includes('at '))
 })
 
-if ('AggregateError' in globalThis) {
-  test('Aggregate errors get new stack traces', (t) => {
-    const innerError = new Error('innerError')
-    const error = new AggregateError([innerError], 'test')
-    const { stack: innerStack } = innerError
-    const { stack } = error
-    const mergedError = mergeErrorCause(error)
-    isSameStack(t, mergedError.stack, stack)
-    isSameStack(t, mergedError.errors[0].stack, innerStack)
-  })
-}
+test('Aggregate errors have separate stack traces', (t) => {
+  const error = new Error('test')
+  error.errors = [new Error('innerError')]
+  const {
+    stack,
+    errors: [{ stack: innerStack }],
+  } = error
+  mergeErrorCause(error)
+  const {
+    stack: newStack,
+    errors: [{ stack: newInnerStack }],
+  } = error
+  isSameStack(t, newStack, stack)
+  isSameStack(t, newInnerStack, innerStack)
+})
 
 test('error.stack is not enumerable', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
-  t.false(isEnum.call(mergeErrorCause, 'stack'))
+  mergeErrorCause(error)
+  t.false(isEnum.call(error, 'stack'))
 })

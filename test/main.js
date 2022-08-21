@@ -4,6 +4,13 @@ import { each } from 'test-each'
 
 test('Error without cause is left as is', (t) => {
   const error = new Error('test')
+  mergeErrorCause(error)
+  t.false('cause' in error)
+})
+
+test('Argument is returned', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
   t.is(mergeErrorCause(error), error)
 })
 
@@ -17,12 +24,15 @@ each([undefined, null, '', new Set([])], ({ title }, error) => {
 test('Error cause is merged', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
-  t.is(mergeErrorCause(error).message, 'cause\ntest')
+  mergeErrorCause(error)
+  t.is(error.message, 'cause\ntest')
+  t.false('cause' in error)
 })
 
 test('Error cause is merged deeply', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
   error.cause.cause = new Error('innerCause')
-  t.is(mergeErrorCause(error).message, 'innerCause\ncause\ntest')
+  mergeErrorCause(error)
+  t.is(error.message, 'innerCause\ncause\ntest')
 })

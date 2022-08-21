@@ -1,24 +1,23 @@
 // Merge error properties, shallowly, with parent error having priority
-export const copyProps = function (mergedError, parent, child) {
-  mergeProps(mergedError, child)
-  mergeProps(mergedError, parent)
-}
-
 // Do not merge inherited properties nor non-enumerable properties.
 // Works with symbol properties.
-const mergeProps = function (mergedError, error) {
+export const copyProps = function (parent, child) {
   // eslint-disable-next-line fp/no-loops
-  for (const propName of Reflect.ownKeys(error)) {
-    mergeProp(mergedError, error, propName)
+  for (const propName of Reflect.ownKeys(child)) {
+    mergeProp(parent, child, propName)
   }
 }
 
-const mergeProp = function (mergedError, error, propName) {
-  const descriptor = Object.getOwnPropertyDescriptor(error, propName)
+const mergeProp = function (parent, child, propName) {
+  if (propName in parent) {
+    return
+  }
+
+  const descriptor = Object.getOwnPropertyDescriptor(child, propName)
 
   if (descriptor !== undefined && !CORE_ERROR_PROPS.has(propName)) {
     // eslint-disable-next-line fp/no-mutating-methods
-    Object.defineProperty(mergedError, propName, descriptor)
+    Object.defineProperty(parent, propName, descriptor)
   }
 }
 
