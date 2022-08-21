@@ -26,7 +26,7 @@ const main = function (userId) {
   } catch (error) {
     throw mergeErrorCause(error)
     // Printed as:
-    //   TypeError: Invalid user id: false
+    //   Error: Invalid user id: false
     //   Could not create user.
   }
 }
@@ -66,10 +66,8 @@ not `require()`.
 `error` `any`\
 _Return value_: `Error`
 
-This never throws.
-
-If `error` is an `Error` instance and has a `cause`, `error` is modified then
-returned. Otherwise, a new `error` is created and returned.
+`error` is directly modified then returned. If it is not an `Error` instance, a
+new one is created. This never throws.
 
 # Background
 
