@@ -1,3 +1,9 @@
+# 2.0.0
+
+## Breaking changes
+
+- The outer error type is [now always used](README.md#error-type)
+
 # 1.3.0
 
 ## Features
