@@ -66,8 +66,8 @@ not `require()`.
 `error` `any`\
 _Return value_: `Error`
 
-`error` is directly modified then returned. If it is not an `Error` instance, a
-new one is created. This never throws.
+If `error` is an `Error` instance, it is modified then returned. Otherwise, a
+new `error` is created then returned. This never throws.
 
 # Background
 
