@@ -10,7 +10,7 @@ import { getStack, hasGeneratedStack, fixStack } from './stack.js'
 // In Node <16.9.0 and in some browsers, `error.cause` requires a polyfill like
 // `error-cause-ponyfill`.
 export default function mergeErrorCause(error) {
-  const { error: errorA } = mergeError(error)
+  const { error: errorA } = mergeError(error, [])
   return errorA
 }
 
@@ -19,30 +19,38 @@ export default function mergeErrorCause(error) {
 //    applied along the stack trace
 // It is applied in `error.cause`, but not in `error.errors` which have their
 // own stack.
-const mergeError = function (error) {
+const mergeError = function (error, parents) {
+  if (parents.includes(error)) {
+    return {}
+  }
+
+  const recurse = (innerError) => mergeError(innerError, [...parents, error])
   const stack = getStack(error)
   const errorA = normalizeException(error, { shallow: true })
   const generatedStack = hasGeneratedStack(errorA, stack)
-  mergeAggregateCauses(errorA, mergeError)
-  const errorB = mergeCause(errorA)
-  return { error: errorB, generatedStack }
+  mergeAggregateCauses(errorA, recurse)
+  mergeCause(errorA, recurse)
+  return { error: errorA, generatedStack }
 }
 
 // `normalizeException()` is called again to ensure the new `name|message` is
 // reflected in `error.stack`.
-const mergeCause = function (parent) {
+const mergeCause = function (parent, recurse) {
   if (parent.cause === undefined) {
-    return parent
+    return
   }
 
-  const { error: child, generatedStack } = mergeError(parent.cause)
+  const { error: child, generatedStack } = recurse(parent.cause)
   // eslint-disable-next-line fp/no-delete, no-param-reassign
   delete parent.cause
   mergeChild(parent, child, generatedStack)
-  return normalizeException(parent)
 }
 
 const mergeChild = function (parent, child, generatedStack) {
+  if (child === undefined) {
+    return
+  }
+
   mergeMessage(parent, child)
   fixStack(parent, child, generatedStack)
   mergeAggregateErrors(parent, child)
