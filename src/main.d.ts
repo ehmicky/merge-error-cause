@@ -1,3 +1,5 @@
+type NormalizeError<ErrorArg> = ErrorArg extends Error ? ErrorArg : Error
+
 /**
  * This merges
  * [`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
@@ -41,4 +43,4 @@
  */
 export default function mergeErrorCause<ErrorArg>(
   error: ErrorArg,
-): Omit<ErrorArg, 'cause'>
+): Omit<NormalizeError<ErrorArg>, 'cause'>
