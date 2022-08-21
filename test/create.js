@@ -15,13 +15,11 @@ test('Parent name is kept in stack', (t) => {
   t.true(error.stack.includes('TypeError'))
 })
 
-if ('AggregateError' in globalThis) {
-  test("Aggregate errors' names are kept", (t) => {
-    const error = new TypeError('test')
-    error.cause = new Error('cause')
-    error.cause.errors = [new RangeError('innerError')]
-    mergeErrorCause(error)
-    t.is(error.name, 'TypeError')
-    t.is(error.errors[0].name, 'RangeError')
-  })
-}
+test("Aggregate errors' names are kept", (t) => {
+  const error = new TypeError('test')
+  error.cause = new Error('cause')
+  error.cause.errors = [new RangeError('innerError')]
+  mergeErrorCause(error)
+  t.is(error.name, 'TypeError')
+  t.is(error.errors[0].name, 'RangeError')
+})

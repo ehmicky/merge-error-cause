@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
@@ -117,3 +118,4 @@ test('error.stack is not enumerable', (t) => {
   mergeErrorCause(error)
   t.false(isEnum.call(error, 'stack'))
 })
+/* eslint-enable max-lines */
