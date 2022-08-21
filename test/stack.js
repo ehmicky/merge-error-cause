@@ -45,64 +45,12 @@ test('Child stack trace is used deeply', (t) => {
   isSameStack(t, error.stack, stack)
 })
 
-// eslint-disable-next-line unicorn/no-null
-each([undefined, null, true, ''], ({ title }, invalidStack) => {
-  test(`Invalid child stack traces are not used | ${title}`, (t) => {
-    const error = getDeepError()
-    error.cause.stack = invalidStack
-    const { stack } = error
-    mergeErrorCause(error)
-    const { stack: newStack } = error
-    isSameStack(t, newStack, stack)
-  })
-
-  test(`Invalid errors' stacks are not used | ${title}`, (t) => {
-    const error = new Error('test')
-    error.cause = { stack: invalidStack }
-    const { stack } = error
-    mergeErrorCause(error)
-    const { stack: newStack } = error
-    isSameStack(t, newStack, stack)
-  })
-})
-
-test('Invalid child stack traces at the bottom are ignored', (t) => {
-  const error = getVeryDeepError()
-  error.cause.cause.stack = ''
-  const { stack } = error.cause
-  mergeErrorCause(error)
-  isSameStack(t, error.stack, stack)
-})
-
-test('Invalid child stack traces at the center are ignored', (t) => {
-  const error = getVeryDeepError()
-  error.cause.stack = ''
-  const { stack } = error.cause.cause
-  mergeErrorCause(error)
-  isSameStack(t, error.stack, stack)
-})
-
-test('Invalid child stack traces at the top are ignored', (t) => {
-  const error = getVeryDeepError()
-  error.stack = ''
-  const { stack } = error.cause.cause
-  mergeErrorCause(error)
-  isSameStack(t, error.stack, stack)
-})
-
 test("Plain objects' stack traces are used", (t) => {
   const error = getDeepError()
   const { stack } = error.cause
   error.cause = { stack }
   mergeErrorCause(error)
   isSameStack(t, error.stack, stack)
-})
-
-test('New stack traces are created if none available', (t) => {
-  const error = new Error('test')
-  error.stack = ''
-  mergeErrorCause(error)
-  t.true(error.stack.includes('at '))
 })
 
 test('Aggregate errors have separate stack traces', (t) => {
@@ -125,5 +73,48 @@ test('error.stack is not enumerable', (t) => {
   const error = getDeepError()
   mergeErrorCause(error)
   t.false(isEnum.call(error, 'stack'))
+})
+
+// eslint-disable-next-line unicorn/no-null
+each([undefined, null, true, ''], ({ title }, invalidStack) => {
+  test(`Invalid child stack traces are not used | ${title}`, (t) => {
+    const error = getDeepError()
+    error.cause.stack = invalidStack
+    const { stack } = error
+    mergeErrorCause(error)
+    const { stack: newStack } = error
+    isSameStack(t, newStack, stack)
+  })
+
+  test(`Invalid child stack traces at the bottom are ignored | ${title}`, (t) => {
+    const error = getVeryDeepError()
+    error.cause.cause.stack = invalidStack
+    const { stack } = error.cause
+    mergeErrorCause(error)
+    isSameStack(t, error.stack, stack)
+  })
+
+  test(`Invalid child stack traces at the center are ignored | ${title}`, (t) => {
+    const error = getVeryDeepError()
+    error.cause.stack = invalidStack
+    const { stack } = error.cause.cause
+    mergeErrorCause(error)
+    isSameStack(t, error.stack, stack)
+  })
+
+  test(`Invalid child stack traces at the top are ignored | ${title}`, (t) => {
+    const error = getVeryDeepError()
+    error.stack = invalidStack
+    const { stack } = error.cause.cause
+    mergeErrorCause(error)
+    isSameStack(t, error.stack, stack)
+  })
+
+  test(`New stack traces are created if none available | ${title}`, (t) => {
+    const error = new Error('test')
+    error.stack = invalidStack
+    mergeErrorCause(error)
+    t.not(error.stack, invalidStack)
+  })
 })
 /* eslint-enable max-lines */
