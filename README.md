@@ -115,8 +115,8 @@ try {
 This is tricky to get right. For example:
 
 - `error.cause.cause` might also exist (and so on)
-- If `error` is not an `Error` instance, `error.name` will throw
-- Recursing over `error.cause` might be infinite
+- If `error` is not an `Error` instance, `error.name` might throw
+- Recursing over `error.cause` might be an infinite cycle
 
 ### Solution
 
@@ -131,9 +131,11 @@ try {
   createUser(userId)
 } catch (error) {
   if (error.code === 'E101') {
+    /* ... */
   }
 
   if (error.name === 'UserError') {
+    /* ... */
   }
 }
 ```
