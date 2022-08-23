@@ -197,7 +197,7 @@ concatenated by default from innermost to outermost. This results in much
 simpler stack traces without losing any information.
 
 ```
-UserError: User "15" does not exist.
+Error: User "15" does not exist.
 Invalid user.
 Could not create user.
 Could not create user group.
@@ -264,7 +264,7 @@ try {
 
 ## Error type
 
-By default, the parent error type is used.
+The parent error type is used.
 
 ```js
 try {
@@ -276,22 +276,6 @@ try {
   console.log(mergedError.name) // 'UserError'
 }
 ```
-
-If the parent error type is `Error` or `AggregateError`, the child type is used
-instead. This allows wrapping the error message or properties while keeping its
-type.
-
-```js
-try {
-  throw new TypeError('User id is not a string.')
-} catch (cause) {
-  const error = new Error('Could not create user.', { cause })
-  console.log(mergeErrorCause(error) instanceof TypeError) // true
-}
-```
-
-The error instance is created with `new ErrorType(message)`. If this throws,
-`new Error(message)` is used instead.
 
 ## Error properties
 
