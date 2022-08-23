@@ -284,11 +284,10 @@ Error properties are shallowly merged.
 <!-- eslint-disable fp/no-mutating-assign -->
 
 ```js
+// Both `userId` and `invalidUser` are kept
 try {
-  // `userId` is kept
   throw Object.assign(new Error('Invalid user id.'), { userId: '5' })
 } catch (cause) {
-  // `invalidUser` is kept too
   throw Object.assign(new Error('Could not create user.', { cause }), {
     invalidUser: true,
   })
