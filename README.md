@@ -224,7 +224,7 @@ to prevent truncated stack traces.
 
 ## Messages
 
-Child error messages are printed first.
+Inner error messages are printed first.
 
 ```js
 try {
@@ -237,7 +237,7 @@ try {
 }
 ```
 
-If the parent error message ends with `:`, it is prepended instead.
+If the outer error message ends with `:`, it is prepended instead.
 
 ```js
 try {
@@ -264,7 +264,7 @@ try {
 
 ## Error type
 
-The parent error type is used.
+The outer error type is used.
 
 ```js
 try {
@@ -281,33 +281,29 @@ try {
 
 Error properties are shallowly merged.
 
-<!-- eslint-disable fp/no-mutation -->
+<!-- eslint-disable fp/no-mutating-assign -->
 
 ```js
 try {
-  const error = new Error('Invalid user id.')
-  // This is kept
-  error.userId = '5'
-  throw error
+  // `userId` is kept
+  throw Object.assign(new Error('Invalid user id.'), { userId: '5' })
 } catch (cause) {
-  const parentError = new Error('Could not create user.', { cause })
-  // This is kept too
-  parentError.invalidUser = true
-  throw parentError
+  // `invalidUser` is kept too
+  throw Object.assign(new Error('Could not create user.', { cause }), {
+    invalidUser: true,
+  })
 }
 ```
 
 Empty error messages are ignored. This is useful when wrapping error properties.
 
-<!-- eslint-disable fp/no-mutation, unicorn/error-message -->
+<!-- eslint-disable fp/no-mutating-assign, unicorn/error-message -->
 
 ```js
 try {
   throw new Error('Invalid user id.')
 } catch (cause) {
-  const parentError = new Error('', { cause })
-  parentError.invalidUser = true
-  throw parentError
+  throw Object.assign(new Error('', { cause }), { invalidUser: true })
 }
 ```
 
