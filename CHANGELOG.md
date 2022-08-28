@@ -1,3 +1,11 @@
+# 2.1.1
+
+## Bug fixes
+
+- Allow `ErrorClass.prototype.constructor` to mismatch `ErrorClass`, in order to
+  support polyfills like
+  [`error-cause-polyfill`](https://github.com/ehmicky/error-cause-polyfill)
+
 # 2.1.0
 
 ## Features
