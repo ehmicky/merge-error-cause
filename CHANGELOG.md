@@ -1,3 +1,16 @@
+# 2.1.0
+
+## Features
+
+- Improve how `error` classes are merged thanks to
+  [`set-error-class`](https://github.com/ehmicky/set-error-class)
+- Improve how `error` message are merged thanks to
+  [`set-error-message`](https://github.com/ehmicky/set-error-message)
+- Improve how `error` properties are merged thanks to
+  [`set-error-props`](https://github.com/ehmicky/set-error-props)
+- Improve how `error.stack` is merged
+- Improve TypeScript types
+
 # 2.0.0
 
 ## Breaking changes

@@ -63,7 +63,7 @@ not `require()`.
 
 ## mergeErrorCause(error)
 
-`error` `any`\
+`error` `Error | any`\
 _Return value_: `Error`
 
 If `error` is an `Error` instance, it is modified then returned. Otherwise, a
@@ -295,7 +295,7 @@ try {
 try {
   throw new TypeError('User id is not a string.')
 } catch (cause) {
-  const error = new AnyError('Could not create user.', { cause })
+  const error = new UserError('Could not create user.', { cause })
   error.wrap = true
   console.log(mergeErrorCause(error) instanceof TypeError) // true
 }
