@@ -80,3 +80,11 @@ test('New class is updated in stack', (t) => {
   t.is(error.name, 'RangeError')
   t.true(error.stack.includes('RangeError: cause'))
 })
+
+test('Parent name is kept when mismatched but class did not change', (t) => {
+  const error = new TypeError('test')
+  error.name = 'RangeError'
+  error.cause = new TypeError('cause')
+  mergeErrorCause(error)
+  t.is(error.name, 'RangeError')
+})
