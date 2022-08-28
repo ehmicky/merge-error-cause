@@ -88,3 +88,11 @@ test('Parent name is kept when mismatched but class did not change', (t) => {
   mergeErrorCause(error)
   t.is(error.name, 'RangeError')
 })
+
+test('Parent name is kept when mismatched and class changed', (t) => {
+  const error = new Error('test')
+  error.cause = new TypeError('cause')
+  error.cause.name = 'RangeError'
+  mergeErrorCause(error)
+  t.is(error.name, 'RangeError')
+})
