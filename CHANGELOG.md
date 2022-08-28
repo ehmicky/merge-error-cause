@@ -1,3 +1,9 @@
+# 2.2.0
+
+## Features
+
+- Improves [`error.wrap`](README.md#error-class)
+
 # 2.1.1
 
 ## Bug fixes
