@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "normalize-exception": "^2.5.1",
-    "set-error-message": "^1.0.1",
+    "set-error-message": "^1.0.2",
     "set-error-props": "^1.1.0"
   },
   "devDependencies": {
