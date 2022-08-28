@@ -4,7 +4,7 @@ import setErrorProps from 'set-error-props'
 import { mergeAggregateCauses, mergeAggregateErrors } from './aggregate.js'
 import { mergeClass } from './class.js'
 import { mergeMessage } from './message.js'
-import { getStack, hasStack, fixStack } from './stack.js'
+import { getStack, hasStack, mergeStack } from './stack.js'
 
 // Merge `error.cause` recursively to a single error.
 // In Node <16.9.0 and in some browsers, `error.cause` requires a polyfill like
@@ -53,9 +53,9 @@ const mergeChild = function (parent, child, childHasStack) {
     return parent
   }
 
-  fixStack(parent, child, childHasStack)
+  const stackError = mergeStack(parent, child, childHasStack)
   mergeClass(parent, child)
-  mergeMessage(parent, child)
+  mergeMessage(parent, child, stackError)
   mergeAggregateErrors(parent, child)
   const parentA = setErrorProps(parent, child, { lowPriority: true })
   return parentA

@@ -56,5 +56,22 @@ test('New error message is reflected in stack', (t) => {
   const error = new Error('test')
   error.cause = new Error('cause')
   mergeErrorCause(error)
-  t.true(error.stack.includes('cause\ntest'))
+  t.true(error.stack.includes(error.message))
+})
+
+test('New error message is reflected in stack even if child stack is invalid', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  error.cause.stack = ''
+  mergeErrorCause(error)
+  t.true(error.stack.includes(error.message))
+})
+
+test('New error message is reflected in stack even if both stacks are invalid', (t) => {
+  const error = new Error('test')
+  error.cause = new Error('cause')
+  error.stack = ''
+  error.cause.stack = ''
+  mergeErrorCause(error)
+  t.true(error.stack.includes(error.message))
 })

@@ -1,4 +1,4 @@
-import { setErrorProperty } from './set.js'
+import setErrorMessage from 'set-error-message'
 
 // Merge parent and child error messages.
 // By default, parent messages are appended
@@ -9,9 +9,9 @@ import { setErrorProperty } from './set.js'
 // Each error message is on its own line, for clarity.
 // Empty messages are ignored
 //  - This is useful when wrapping an error properties, but not message
-export const mergeMessage = function (parent, child) {
+export const mergeMessage = function (parent, child, stackError) {
   const message = getMessage(parent.message, child.message)
-  setErrorProperty(parent, 'message', message)
+  setErrorMessage(parent, message, stackError.message)
 }
 
 const getMessage = function (rawParentMessage, rawChildMessage) {
