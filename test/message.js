@@ -10,7 +10,6 @@ test('Messages are trimmed', (t) => {
 })
 
 test('Empty parent messages are ignored', (t) => {
-  // eslint-disable-next-line unicorn/error-message
   const error = new Error('')
   error.prop = true
   error.cause = new Error('cause')
@@ -21,7 +20,6 @@ test('Empty parent messages are ignored', (t) => {
 
 test('Empty child messages are ignored', (t) => {
   const error = new Error('test')
-  // eslint-disable-next-line unicorn/error-message
   error.cause = new Error('')
   error.cause.prop = true
   mergeErrorCause(error)
