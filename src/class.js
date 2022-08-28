@@ -5,8 +5,13 @@ import setErrorClass from 'set-error-class'
 //  - Parent as property `wrap: true`
 export const mergeClass = function (parent, child, stackError) {
   const constructorError = shouldMergeClass(parent) ? child : parent
-  setErrorClass(parent, constructorError.constructor, stackError.name)
-  fixName(parent, constructorError)
+  const parentA = setErrorClass(
+    parent,
+    constructorError.constructor,
+    stackError.name,
+  )
+  fixName(parentA, constructorError)
+  return parentA
 }
 
 const shouldMergeClass = function ({ name, wrap }) {
