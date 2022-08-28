@@ -57,6 +57,6 @@ const mergeChild = function (parent, child, childHasStack) {
   const parentA = mergeClass(parent, child, stackError)
   const parentB = mergeMessage(parentA, child, stackError)
   mergeAggregateErrors(parentB, child)
-  const parentC = setErrorProps(parentB, child, { lowPriority: true })
+  const parentC = setErrorProps(parentB, child, { soft: true })
   return parentC
 }

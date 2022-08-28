@@ -2,8 +2,8 @@ import type setErrorProps from 'set-error-props'
 
 type NormalizeError<ErrorArg> = ErrorArg extends Error ? ErrorArg : Error
 
-type SetErrorProps<ErrorArg, Cause extends object> = ReturnType<
-  typeof setErrorProps<ErrorArg, Cause, { lowPriority: true }>
+type SetErrorProps<ErrorArg extends object, Cause extends object> = ReturnType<
+  typeof setErrorProps<ErrorArg, Cause, { soft: true }>
 >
 
 type MergeErrorCause<ErrorArg> = 'cause' extends keyof ErrorArg
