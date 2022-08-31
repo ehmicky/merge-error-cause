@@ -366,6 +366,8 @@ try {
   errors to/from plain objects
 - [`normalize-exception`](https://github.com/ehmicky/normalize-exception):
   Normalize exceptions/errors
+- [`set-error-class`](https://github.com/ehmicky/set-error-class): Properly
+  update an error's class
 - [`set-error-message`](https://github.com/ehmicky/set-error-message): Properly
   update an error's message
 - [`set-error-props`](https://github.com/ehmicky/set-error-props): Properly
