@@ -1,9 +1,9 @@
 import normalizeException from 'normalize-exception'
+import setErrorClass from 'set-error-class'
 import setErrorProps from 'set-error-props'
 
 import { mergeAggregateCauses, mergeAggregateErrors } from './aggregate.js'
 import { mergeMessage } from './message.js'
-import { mergeName } from './name.js'
 import { getStack, hasStack, mergeStack } from './stack.js'
 import { getWrap } from './wrap.js'
 
@@ -58,7 +58,7 @@ const mergeChild = function ({ parent, child, childHasStack, wrap }) {
 
   const [target, source] = wrap ? [child, parent] : [parent, child]
   const stackError = mergeStack({ wrap, target, source, childHasStack })
-  const targetA = mergeName(target, stackError)
+  const targetA = setErrorClass(target, target.constructor, stackError.name)
   const targetB = mergeMessage({ parent, child, target: targetA, stackError })
   mergeAggregateErrors({ target: targetB, source, parent, child })
   const targetC = setErrorProps(targetB, source, { soft: !wrap })
