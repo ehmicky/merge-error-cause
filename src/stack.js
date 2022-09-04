@@ -21,11 +21,11 @@ export const getStack = function (error) {
 // Merging stacks might lose some stack trace if:
 //  - `Error.stackTraceLimit` is too low, in which case it should be increased
 //  - Using callbacks, in which case `async`/`await` should be used
-export const mergeStack = function (parent, child, childHasStack) {
-  if (!childHasStack) {
-    return parent
+export const mergeStack = function ({ wrap, target, source, childHasStack }) {
+  if (wrap === childHasStack) {
+    return target
   }
 
-  setErrorProperty(parent, 'stack', child.stack)
-  return child
+  setErrorProperty(target, 'stack', source.stack)
+  return source
 }

@@ -3,14 +3,14 @@ import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
 test('Error without cause is left as is', (t) => {
-  const error = new Error('test')
+  const error = new TypeError('test')
   mergeErrorCause(error)
   t.false('cause' in error)
 })
 
 test('Argument is returned', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
   t.is(mergeErrorCause(error), error)
 })
 
@@ -22,23 +22,23 @@ each([undefined, null, '', new Set([])], ({ title }, error) => {
 })
 
 test('Error cause is merged', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
   mergeErrorCause(error)
   t.is(error.message, 'cause\ntest')
   t.false('cause' in error)
 })
 
 test('Error cause is merged deeply', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.cause.cause = new Error('innerCause')
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
+  error.cause.cause = new TypeError('innerCause')
   mergeErrorCause(error)
   t.is(error.message, 'innerCause\ncause\ntest')
 })
 
 test('Handle cause cycles', (t) => {
-  const error = new Error('test')
+  const error = new TypeError('test')
   error.cause = error
   mergeErrorCause(error)
   t.false('cause' in error)
@@ -46,7 +46,7 @@ test('Handle cause cycles', (t) => {
 })
 
 test('Handle aggregate errors cycles', (t) => {
-  const error = new Error('test')
+  const error = new TypeError('test')
   error.errors = [error]
   mergeErrorCause(error)
   t.is(error.errors.length, 0)
@@ -54,9 +54,9 @@ test('Handle aggregate errors cycles', (t) => {
 })
 
 test('Handle cause and aggregate errors cycles', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.cause.errors = [new Error('innerCause'), error]
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
+  error.cause.errors = [new TypeError('innerCause'), error]
   error.cause.errors[0].cause = error
   mergeErrorCause(error)
   t.is(error.message, 'cause\ntest')

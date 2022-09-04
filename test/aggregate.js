@@ -4,67 +4,67 @@ import mergeErrorCause from 'merge-error-cause'
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
 test('Merge cause in "errors" without "cause"', (t) => {
-  const error = new Error('test')
-  error.errors = [new Error('innerError')]
-  error.errors[0].cause = new Error('cause')
+  const error = new TypeError('test')
+  error.errors = [new TypeError('innerError')]
+  error.errors[0].cause = new TypeError('cause')
   mergeErrorCause(error)
   t.is(error.message, 'test')
   t.is(error.errors[0].message, 'cause\ninnerError')
 })
 
 test('Merge cause in "errors" with "cause"', (t) => {
-  const error = new Error('test')
-  error.errors = [new Error('innerError')]
-  error.cause = new Error('secondCause')
-  error.errors[0].cause = new Error('cause')
+  const error = new TypeError('test')
+  error.errors = [new TypeError('innerError')]
+  error.cause = new TypeError('secondCause')
+  error.errors[0].cause = new TypeError('cause')
   mergeErrorCause(error)
   t.is(error.message, 'secondCause\ntest')
   t.is(error.errors[0].message, 'cause\ninnerError')
 })
 
 test('Does not set "errors" if none', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
   mergeErrorCause(error)
   t.false('errors' in error)
 })
 
 test('Use child "errors" if no parent', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.cause.errors = [new Error('innerError')]
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
+  error.cause.errors = [new TypeError('innerError')]
   mergeErrorCause(error)
   t.is(error.errors[0].message, 'innerError')
   t.false(isEnum.call(error, 'errors'))
 })
 
 test('Normalize "errors"', (t) => {
-  const error = new Error('test')
+  const error = new TypeError('test')
   error.errors = ['innerError']
   mergeErrorCause(error)
   t.is(error.errors[0].message, 'innerError')
 })
 
 test('Handles invalid "errors"', (t) => {
-  const error = new Error('test')
+  const error = new TypeError('test')
   error.errors = 'innerError'
   mergeErrorCause(error)
   t.is(error.errors, undefined)
 })
 
 test('Use parent "errors" if no child', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.errors = [new Error('innerError')]
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
+  error.errors = [new TypeError('innerError')]
   mergeErrorCause(error)
   t.is(error.errors[0].message, 'innerError')
 })
 
 test('Concatenate "errors"', (t) => {
-  const error = new Error('test')
-  error.cause = new Error('cause')
-  error.errors = [new Error('one')]
-  error.cause.errors = [new Error('two')]
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
+  error.errors = [new TypeError('one')]
+  error.cause.errors = [new TypeError('two')]
   mergeErrorCause(error)
   t.is(error.errors.length, 2)
   t.is(error.errors[0].message, 'two')

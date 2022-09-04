@@ -2,9 +2,10 @@ import normalizeException from 'normalize-exception'
 import setErrorProps from 'set-error-props'
 
 import { mergeAggregateCauses, mergeAggregateErrors } from './aggregate.js'
-import { getWrap, mergeClass } from './class.js'
 import { mergeMessage } from './message.js'
+import { mergeName } from './name.js'
 import { getStack, hasStack, mergeStack } from './stack.js'
+import { getWrap } from './wrap.js'
 
 // Merge `error.cause` recursively to a single error.
 // In Node <16.9.0 and in some browsers, `error.cause` requires a polyfill like
@@ -55,10 +56,11 @@ const mergeChild = function ({ parent, child, childHasStack, wrap }) {
     return parent
   }
 
-  const stackError = mergeStack(parent, child, childHasStack)
-  const parentA = mergeClass({ parent, child, stackError, wrap })
-  const parentB = mergeMessage(parentA, child, stackError)
-  mergeAggregateErrors(parentB, child)
-  const parentC = setErrorProps(parentB, child, { soft: true })
-  return parentC
+  const [target, source] = wrap ? [child, parent] : [parent, child]
+  const stackError = mergeStack({ wrap, target, source, childHasStack })
+  const targetA = mergeName(target, stackError)
+  const targetB = mergeMessage({ parent, child, target: targetA, stackError })
+  mergeAggregateErrors({ target: targetB, source, parent, child })
+  const targetC = setErrorProps(targetB, source, { soft: !wrap })
+  return targetC
 }

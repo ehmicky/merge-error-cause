@@ -22,14 +22,30 @@ export const mergeAggregateCauses = function (parent, recurse) {
   setErrorProperty(parent, 'errors', errors)
 }
 
-export const mergeAggregateErrors = function (parent, child) {
-  if (child.errors === undefined) {
+export const mergeAggregateErrors = function ({
+  target,
+  source,
+  parent,
+  child,
+}) {
+  if (!hasErrors(target)) {
+    mergeSourceErrors(target, source)
     return
   }
 
-  const errors =
-    parent.errors === undefined
-      ? child.errors
-      : [...child.errors, ...parent.errors]
-  setErrorProperty(parent, 'errors', errors)
+  if (hasErrors(source)) {
+    setErrorProperty(target, 'errors', [...child.errors, ...parent.errors])
+  }
+}
+
+const mergeSourceErrors = function (target, source) {
+  if (source.errors !== undefined) {
+    setErrorProperty(target, 'errors', source.errors)
+  }
+}
+
+const hasErrors = function (targetOrSource) {
+  return (
+    targetOrSource.errors !== undefined && targetOrSource.errors.length !== 0
+  )
 }

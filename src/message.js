@@ -9,9 +9,9 @@ import setErrorMessage from 'set-error-message'
 // Each error message is on its own line, for clarity.
 // Empty messages are ignored
 //  - This is useful when wrapping an error properties, but not message
-export const mergeMessage = function (parent, child, stackError) {
+export const mergeMessage = function ({ parent, child, target, stackError }) {
   const message = getMessage(parent.message, child.message)
-  return setErrorMessage(parent, message, stackError.message)
+  return setErrorMessage(target, message, stackError.message)
 }
 
 const getMessage = function (rawParentMessage, rawChildMessage) {

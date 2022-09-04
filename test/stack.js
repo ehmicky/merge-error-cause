@@ -21,13 +21,13 @@ const isStackLine = function (line) {
 
 const getVeryDeepError = function () {
   const error = getDeepError()
-  error.cause.cause = new Error('innerCause')
+  error.cause.cause = new TypeError('innerCause')
   return error
 }
 
 const getDeepError = function () {
-  const error = new Error('test')
-  error.cause = new Error('cause')
+  const error = new TypeError('test')
+  error.cause = new TypeError('cause')
   return error
 }
 
@@ -54,8 +54,8 @@ test("Plain objects' stack traces are used", (t) => {
 })
 
 test('Aggregate errors have separate stack traces', (t) => {
-  const error = new Error('test')
-  error.errors = [new Error('innerError')]
+  const error = new TypeError('test')
+  error.errors = [new TypeError('innerError')]
   const {
     stack,
     errors: [{ stack: innerStack }],
@@ -78,7 +78,7 @@ test('error.stack is not enumerable', (t) => {
 // eslint-disable-next-line unicorn/no-null
 each([undefined, null, {}], ({ title }, cause) => {
   test(`Missing child stack traces are not used | ${title}`, (t) => {
-    const error = new Error('test')
+    const error = new TypeError('test')
     error.cause = cause
     const { stack } = error
     mergeErrorCause(error)
@@ -132,7 +132,7 @@ each([undefined, null, true, ''], ({ title }, invalidStack) => {
   })
 
   test(`New stack traces are created if none available | ${title}`, (t) => {
-    const error = new Error('test')
+    const error = new TypeError('test')
     error.stack = invalidStack
     mergeErrorCause(error)
     t.not(error.stack, invalidStack)
