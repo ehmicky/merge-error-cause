@@ -2,59 +2,78 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-test('Child is mutated and returned if parent is Error', (t) => {
-  const error = new Error('test')
-  error.cause = new RangeError('cause')
-  const cause = mergeErrorCause(error)
-  t.not(cause, error)
-  t.is(cause.message, 'cause\ntest')
-  t.is(error.message, 'test')
-})
+// eslint-disable-next-line fp/no-class
+class PrototypeWrapError extends Error {}
+// eslint-disable-next-line fp/no-mutating-assign
+Object.assign(PrototypeWrapError.prototype, { name: 'WrapError', wrap: true })
 
-test('Child is mutated and returned if parent.wrap true', (t) => {
-  const error = new TypeError('test')
-  error.cause = new RangeError('cause')
-  error.wrap = true
-  t.not(mergeErrorCause(error), error)
-})
+// eslint-disable-next-line fp/no-class
+class InstanceWrapError extends Error {
+  constructor(...args) {
+    super(...args)
+    // eslint-disable-next-line fp/no-this, fp/no-mutation
+    this.wrap = true
+  }
+}
+
+each(
+  [Error, PrototypeWrapError, InstanceWrapError],
+  ({ title }, ErrorClass) => {
+    test(`Child is returned if parent wraps | ${title}`, (t) => {
+      const error = new ErrorClass('test')
+      error.cause = new TypeError('cause')
+      t.is(error.cause, mergeErrorCause(error))
+    })
+
+    test(`Child is mutated if parent wraps | ${title}`, (t) => {
+      const error = new ErrorClass('test')
+      error.cause = new TypeError('cause')
+      t.is(mergeErrorCause(error).message, 'cause\ntest')
+      t.is(error.message, 'test')
+    })
+  },
+)
 
 each([false, undefined, 'true'], ({ title }, wrap) => {
-  test(`Parent is mutated and returned if parent.wrap not true | ${title}`, (t) => {
-    const error = new TypeError('test')
-    const cause = new RangeError('cause')
+  test(`Parent is returned if parent does not wrap | ${title}`, (t) => {
+    const error = new RangeError('test')
+    error.cause = new TypeError('cause')
+    error.wrap = wrap
+    t.is(error, mergeErrorCause(error))
+  })
+
+  test(`Parent is mutated if parent does not wrap | ${title}`, (t) => {
+    const error = new RangeError('test')
+    const cause = new TypeError('cause')
     error.cause = cause
     error.wrap = wrap
-    const sameError = mergeErrorCause(error)
-    t.is(sameError, error)
-    t.is(sameError.message, 'cause\ntest')
+    t.is(mergeErrorCause(error).message, 'cause\ntest')
     t.is(cause.message, 'cause')
-    t.not(error.wrap, false)
   })
 })
 
 test('parent.wrap has priority over Error name', (t) => {
   const error = new Error('test')
-  error.cause = new RangeError('cause')
+  error.cause = new TypeError('cause')
   error.wrap = false
   t.is(mergeErrorCause(error), error)
 })
 
-// eslint-disable-next-line fp/no-class
-class WrapError extends Error {}
-// eslint-disable-next-line fp/no-mutating-assign
-Object.assign(WrapError.prototype, { name: 'WrapError', wrap: true })
+each(
+  [false, true],
+  [{}, { cause: new TypeError('cause') }],
+  ({ title }, wrap, opts) => {
+    test(`parent.wrap is deleted | ${title}`, (t) => {
+      const error = new RangeError('test', opts)
+      error.wrap = wrap
+      t.false('wrap' in mergeErrorCause(error))
+    })
+  },
+)
 
-test('parent.wrap can be set on the error prototype', (t) => {
-  const error = new WrapError('test')
-  error.cause = new RangeError('cause')
-  t.not(mergeErrorCause(error), error)
-  t.true('wrap' in error)
-  t.true(WrapError.prototype.wrap)
-})
-
-test('parent.wrap is removed even without a cause', (t) => {
-  const error = new TypeError('test')
-  error.wrap = false
-  mergeErrorCause(error)
-  t.false('wrap' in error)
+test('parent.wrap is not deleted when set on the error prototype', (t) => {
+  const error = new PrototypeWrapError('test')
+  error.cause = new TypeError('cause')
+  t.false('wrap' in mergeErrorCause(error))
+  t.true(PrototypeWrapError.prototype.wrap)
 })
