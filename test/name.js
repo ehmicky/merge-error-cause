@@ -2,57 +2,51 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-test('Parent name is kept', (t) => {
-  const error = new TypeError('test')
-  error.cause = new RangeError('cause')
-  mergeErrorCause(error)
-  t.is(error.name, 'TypeError')
-})
+each([true, false], ({ title }, wrap) => {
+  test(`Parent and child names are kept | ${title}`, (t) => {
+    const error = new TypeError('test')
+    const cause = new RangeError('cause')
+    error.cause = cause
+    error.wrap = wrap
+    mergeErrorCause(error)
+    t.is(error.name, 'TypeError')
+    t.is(cause.name, 'RangeError')
+  })
 
-test('Child name is kept', (t) => {
-  const error = new Error('test')
-  error.cause = new RangeError('cause')
-  const cause = mergeErrorCause(error)
-  t.is(cause.name, 'RangeError')
-})
-
-test('Parent name is kept in stack', (t) => {
-  const error = new TypeError('test')
-  error.cause = new RangeError('cause')
-  mergeErrorCause(error)
-  t.true(error.stack.includes('TypeError'))
-})
-
-test('Child name is kept in non-generated stack', (t) => {
-  const error = new Error('test')
-  error.cause = new RangeError('cause')
-  const cause = mergeErrorCause(error)
-  t.true(cause.stack.includes('RangeError'))
-})
-
-test('Child name is kept in generated stack', (t) => {
-  const error = new Error('test')
-  error.cause = new RangeError('cause')
-  error.cause.stack = ''
-  const cause = mergeErrorCause(error)
-  t.true(cause.stack.includes('RangeError'))
-})
-
-test("Aggregate errors' names are kept", (t) => {
-  const error = new TypeError('test')
-  error.cause = new RangeError('cause')
-  error.cause.errors = [new RangeError('innerError')]
-  mergeErrorCause(error)
-  t.is(error.name, 'TypeError')
-  t.is(error.errors[0].name, 'RangeError')
-})
-
-each([TypeError, Error], ({ title }, ErrorClass) => {
-  test(`Parent name is kept when mismatched | ${title}`, (t) => {
-    const error = new ErrorClass('test')
+  test(`Parent and child names are kept even when mismatched | ${title}`, (t) => {
+    const error = new TypeError('test')
     error.name = 'RangeError'
-    error.cause = new TypeError('cause')
+    const cause = new TypeError('cause')
+    error.cause = cause
+    error.cause.name = 'RangeError'
+    error.wrap = wrap
     mergeErrorCause(error)
     t.is(error.name, 'RangeError')
+    t.is(cause.name, 'RangeError')
+  })
+
+  test(`Aggregate errors' names are kept | ${title}`, (t) => {
+    const error = new TypeError('test')
+    error.cause = new RangeError('cause')
+    error.cause.errors = [new RangeError('innerError')]
+    error.wrap = wrap
+    t.is(mergeErrorCause(error).errors[0].name, 'RangeError')
+  })
+})
+
+each([true, false], [true, false], ({ title }, wrap, resetStack) => {
+  test(`Parent and child names are kept in stack | ${title}`, (t) => {
+    const error = new TypeError('test')
+    const cause = new RangeError('cause')
+    error.cause = cause
+
+    if (resetStack) {
+      error.cause.stack = ''
+    }
+
+    error.wrap = wrap
+    mergeErrorCause(error)
+    t.true(error.stack.includes('TypeError'))
+    t.true(cause.stack.includes('RangeError'))
   })
 })
