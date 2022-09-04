@@ -80,10 +80,7 @@ each(
     test(`Missing child stack traces are not used | ${title}`, (t) => {
       const error = new ErrorClass('test')
       error.cause = cause
-      const { stack } = error
-      mergeErrorCause(error)
-      const { stack: newStack } = error
-      isSameStack(t, newStack, stack)
+      isSameStack(t, error.stack, mergeErrorCause(error).stack)
     })
   },
 )
