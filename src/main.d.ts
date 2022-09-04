@@ -25,6 +25,17 @@ type MergeErrorCause<ErrorArg> = 'cause' extends keyof ErrorArg
  * and
  * [`errors`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError).
  *
+ * `error` is modified and returned.
+ *
+ * If `error`'s class is `Error` or if `error.wrap` is `true`,
+ * [`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
+ * is modified and returned instead.
+ *
+ * If `error` is not a valid `Error`, a new `error` is created and returned
+ * instead.
+ *
+ * This never throws.
+ *
  * @example
  * ```js
  * const main = function (userId) {
