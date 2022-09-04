@@ -66,8 +66,16 @@ not `require()`.
 `error` `Error | any`\
 _Return value_: `Error`
 
-If `error` is an `Error` instance, it is modified then returned. Otherwise, a
-new `error` is created then returned. This never throws.
+`error` is modified and returned.
+
+If `error`'s class is `Error` or if [`error.wrap`](#error-class) is `true`,
+[`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
+is modified and returned instead.
+
+If `error` is not an `Error` instance, a new `error` is created and returned
+instead.
+
+This never throws.
 
 # Background
 
