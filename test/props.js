@@ -1,36 +1,35 @@
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
+import { each } from 'test-each'
 
-test('Child error properties are merged', (t) => {
-  const error = new TypeError('test')
-  error.cause = new TypeError('cause')
-  error.cause.prop = true
-  mergeErrorCause(error)
-  t.true(error.prop)
-})
+each([Error, TypeError], ({ title }, ErrorClass) => {
+  test(`Child error properties are merged | ${title}`, (t) => {
+    const error = new ErrorClass('test')
+    error.cause = new TypeError('cause')
+    error.cause.prop = true
+    t.true(mergeErrorCause(error).prop)
+  })
 
-test('Parent error properties are merged', (t) => {
-  const error = new TypeError('test')
-  error.cause = new TypeError('cause')
-  error.prop = true
-  mergeErrorCause(error)
-  t.true(error.prop)
-})
+  test(`Parent error properties are merged | ${title}`, (t) => {
+    const error = new ErrorClass('test')
+    error.cause = new TypeError('cause')
+    error.prop = true
+    t.true(mergeErrorCause(error).prop)
+  })
 
-test('Parent error properties are merged with priority', (t) => {
-  const error = new TypeError('test')
-  error.cause = new TypeError('cause')
-  error.prop = true
-  error.cause.prop = false
-  mergeErrorCause(error)
-  t.true(error.prop)
-})
+  test(`Parent error properties are merged with priority | ${title}`, (t) => {
+    const error = new ErrorClass('test')
+    error.cause = new TypeError('cause')
+    error.prop = true
+    error.cause.prop = false
+    t.true(mergeErrorCause(error).prop)
+  })
 
-test('Symbol error properties are merged', (t) => {
-  const error = new TypeError('test')
-  error.cause = new TypeError('cause')
-  const symbol = Symbol('prop')
-  error.cause[symbol] = true
-  mergeErrorCause(error)
-  t.true(error[symbol])
+  test(`Symbol error properties are merged | ${title}`, (t) => {
+    const error = new ErrorClass('test')
+    error.cause = new TypeError('cause')
+    const symbol = Symbol('prop')
+    error.cause[symbol] = true
+    t.true(mergeErrorCause(error)[symbol])
+  })
 })
