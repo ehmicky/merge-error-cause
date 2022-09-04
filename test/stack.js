@@ -75,17 +75,21 @@ test('error.stack is not enumerable', (t) => {
   t.false(isEnum.call(error, 'stack'))
 })
 
-// eslint-disable-next-line unicorn/no-null
-each([undefined, null, {}], ({ title }, cause) => {
-  test(`Missing child stack traces are not used | ${title}`, (t) => {
-    const error = new TypeError('test')
-    error.cause = cause
-    const { stack } = error
-    mergeErrorCause(error)
-    const { stack: newStack } = error
-    isSameStack(t, newStack, stack)
-  })
-})
+each(
+  // eslint-disable-next-line unicorn/no-null
+  [undefined, null, {}],
+  [TypeError, Error],
+  ({ title }, cause, ErrorClass) => {
+    test(`Missing child stack traces are not used | ${title}`, (t) => {
+      const error = new ErrorClass('test')
+      error.cause = cause
+      const { stack } = error
+      mergeErrorCause(error)
+      const { stack: newStack } = error
+      isSameStack(t, newStack, stack)
+    })
+  },
+)
 
 /* eslint-disable unicorn/consistent-destructuring */
 // eslint-disable-next-line unicorn/no-null
