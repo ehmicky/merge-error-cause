@@ -33,7 +33,8 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
   test(`Use child "errors" if no parent | ${title}`, (t) => {
     const error = new ErrorClass('test')
     error.cause = new TypeError('cause')
-    error.cause.errors = [new TypeError('innerError')]
+    const errors = [new TypeError('innerError')]
+    error.cause.errors = errors
     const returnError = mergeErrorCause(error)
     t.is(returnError.errors[0].message, 'innerError')
     t.false(isEnum.call(returnError, 'errors'))
@@ -61,8 +62,8 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
   test(`Concatenate "errors" | ${title}`, (t) => {
     const error = new ErrorClass('test')
     error.cause = new TypeError('cause')
-    error.errors = [new TypeError('one')]
     error.cause.errors = [new TypeError('two')]
+    error.errors = [new TypeError('one')]
     const { errors } = mergeErrorCause(error)
     t.is(errors.length, 2)
     t.is(errors[0].message, 'two')

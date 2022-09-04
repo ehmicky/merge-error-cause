@@ -25,18 +25,18 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
     const error = new ErrorClass('')
     error.prop = true
     error.cause = new TypeError('cause')
-    const returnError = mergeErrorCause(error)
-    t.is(returnError.message, 'cause')
-    t.true(returnError.prop)
+    const { message, prop } = mergeErrorCause(error)
+    t.is(message, 'cause')
+    t.true(prop)
   })
 
   test(`Empty child messages are ignored | ${title}`, (t) => {
     const error = new ErrorClass('test')
     error.cause = new TypeError('')
     error.cause.prop = true
-    const returnError = mergeErrorCause(error)
-    t.is(returnError.message, 'test')
-    t.true(returnError.prop)
+    const { message, prop } = mergeErrorCause(error)
+    t.is(message, 'test')
+    t.true(prop)
   })
 
   test(`Prepend messages with colon and newline | ${title}`, (t) => {
@@ -54,16 +54,16 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
   test(`New error message is reflected in stack | ${title}`, (t) => {
     const error = new ErrorClass('test')
     error.cause = new TypeError('cause')
-    const returnError = mergeErrorCause(error)
-    t.true(returnError.stack.includes(returnError.message))
+    const { stack, message } = mergeErrorCause(error)
+    t.true(stack.includes(message))
   })
 
   test(`New error message is reflected in stack even if child stack is invalid | ${title}`, (t) => {
     const error = new ErrorClass('test')
     error.cause = new TypeError('cause')
     error.cause.stack = ''
-    const returnError = mergeErrorCause(error)
-    t.true(returnError.stack.includes(returnError.message))
+    const { stack, message } = mergeErrorCause(error)
+    t.true(stack.includes(message))
   })
 
   test(`New error message is reflected in stack even if both stacks are invalid | ${title}`, (t) => {
@@ -71,7 +71,7 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
     error.cause = new TypeError('cause')
     error.stack = ''
     error.cause.stack = ''
-    const returnError = mergeErrorCause(error)
-    t.true(returnError.stack.includes(returnError.message))
+    const { stack, message } = mergeErrorCause(error)
+    t.true(stack.includes(message))
   })
 })

@@ -49,7 +49,8 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
 
   test(`Handle cause and aggregate errors cycles | ${title}`, (t) => {
     const error = new ErrorClass('test')
-    error.cause = new TypeError('cause')
+    const cause = new TypeError('cause')
+    error.cause = cause
     error.cause.errors = [new TypeError('innerCause'), error]
     error.cause.errors[0].cause = error
     const { message, errors } = mergeErrorCause(error)
