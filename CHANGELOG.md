@@ -1,3 +1,11 @@
+# 3.0.0
+
+## Breaking changes
+
+- When the argument's class is `Error` or when it has a `wrap: true` property,
+  its `cause` property is now
+  [modified and returned instead](README.md#error-class).
+
 # 2.5.1
 
 ## Bug fixes
