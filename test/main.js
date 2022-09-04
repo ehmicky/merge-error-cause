@@ -9,7 +9,7 @@ each([undefined, null, '', new Set([])], ({ title }, error) => {
   })
 })
 
-each([Error, TypeError], ({ title }, ErrorClass) => {
+each([TypeError, Error], ({ title }, ErrorClass) => {
   test(`Error without cause is left as is | ${title}`, (t) => {
     const error = new ErrorClass('test')
     t.false('cause' in mergeErrorCause(error))

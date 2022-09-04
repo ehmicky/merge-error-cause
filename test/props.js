@@ -2,7 +2,7 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-each([Error, TypeError], ({ title }, ErrorClass) => {
+each([TypeError, Error], ({ title }, ErrorClass) => {
   test(`Child error properties are merged | ${title}`, (t) => {
     const error = new ErrorClass('test')
     error.cause = new TypeError('cause')

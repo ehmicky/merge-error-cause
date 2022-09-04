@@ -4,7 +4,7 @@ import { each } from 'test-each'
 
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
-each([Error, TypeError], ({ title }, ErrorClass) => {
+each([TypeError, Error], ({ title }, ErrorClass) => {
   test(`Merge cause in "errors" without "cause" | ${title}`, (t) => {
     const error = new ErrorClass('test')
     error.errors = [new TypeError('innerError')]
