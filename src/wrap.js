@@ -1,6 +1,10 @@
 // Allow parent to re-use child's error class if either:
 //  - Parent class is generic `Error`
 //  - Parent `error.wrap` is `true`
+// Instead of modifying the parent's prototype, we modify and return the child
+// class instead.
+//  - This is because modifying an instance prototype is hacky, as the instance
+//    would have a prototype different from the constructor it called
 export const getWrap = function (parent) {
   const { wrap, name } = parent
 
