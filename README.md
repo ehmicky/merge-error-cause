@@ -70,9 +70,9 @@ _Return value_: `Error`
 
 If `error`'s class is `Error` or if [`error.wrap`](#error-class) is `true`,
 [`error.cause`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
-is modified and returned instead.
+is modified and returned instead of `error`.
 
-If `error` is not an `Error` instance, a new `error` is created and returned
+If `error` is not a valid `Error`, a new `error` is created and returned
 instead.
 
 This never throws.
