@@ -57,3 +57,10 @@ test('parent.wrap can be set on the error prototype', (t) => {
   t.false('wrap' in error)
   t.true(WrapError.prototype.wrap)
 })
+
+test('parent.wrap is removed even without a cause', (t) => {
+  const error = new Error('test')
+  error.wrap = false
+  mergeErrorCause(error)
+  t.false('wrap' in error)
+})

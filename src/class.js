@@ -3,18 +3,7 @@ import setErrorClass from 'set-error-class'
 // Allow parent to re-use child's error class if either:
 //  - Parent class is generic `Error`
 //  - Parent `error.wrap` is `true`
-export const mergeClass = function (parent, child, stackError) {
-  const constructorError = shouldMergeClass(parent) ? child : parent
-  const parentA = setErrorClass(
-    parent,
-    constructorError.constructor,
-    stackError.name,
-  )
-  fixName(parentA, constructorError)
-  return parentA
-}
-
-const shouldMergeClass = function (parent) {
+export const getWrap = function (parent) {
   const { wrap, name } = parent
 
   if (typeof wrap !== 'boolean') {
@@ -30,6 +19,17 @@ const shouldMergeClass = function (parent) {
 }
 
 const { hasOwnProperty: isOwn } = Object.prototype
+
+export const mergeClass = function ({ parent, child, stackError, wrap }) {
+  const constructorError = wrap ? child : parent
+  const parentA = setErrorClass(
+    parent,
+    constructorError.constructor,
+    stackError.name,
+  )
+  fixName(parentA, constructorError)
+  return parentA
+}
 
 // `set-error-class` should have set the proper `error.name` providing either:
 //   - It is set as `ErrorClass.prototype.name`

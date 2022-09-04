@@ -1,3 +1,9 @@
+# 2.5.1
+
+## Bug fixes
+
+- Delete internal `wrap` property
+
 # 2.5.0
 
 ## Features

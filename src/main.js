@@ -2,7 +2,7 @@ import normalizeException from 'normalize-exception'
 import setErrorProps from 'set-error-props'
 
 import { mergeAggregateCauses, mergeAggregateErrors } from './aggregate.js'
-import { mergeClass } from './class.js'
+import { getWrap, mergeClass } from './class.js'
 import { mergeMessage } from './message.js'
 import { getStack, hasStack, mergeStack } from './stack.js'
 
@@ -37,6 +37,8 @@ const mergeError = function (error, parents) {
 // `normalizeException()` is called again to ensure the new `name|message` is
 // reflected in `error.stack`.
 const mergeCause = function (parent, recurse) {
+  const wrap = getWrap(parent)
+
   if (parent.cause === undefined) {
     return { parent, childHasStack: false }
   }
@@ -44,17 +46,17 @@ const mergeCause = function (parent, recurse) {
   const { error: child, errorHasStack: childHasStack } = recurse(parent.cause)
   // eslint-disable-next-line fp/no-delete, no-param-reassign
   delete parent.cause
-  const parentA = mergeChild(parent, child, childHasStack)
+  const parentA = mergeChild({ parent, child, childHasStack, wrap })
   return { parent: parentA, childHasStack }
 }
 
-const mergeChild = function (parent, child, childHasStack) {
+const mergeChild = function ({ parent, child, childHasStack, wrap }) {
   if (child === undefined) {
     return parent
   }
 
   const stackError = mergeStack(parent, child, childHasStack)
-  const parentA = mergeClass(parent, child, stackError)
+  const parentA = mergeClass({ parent, child, stackError, wrap })
   const parentB = mergeMessage(parentA, child, stackError)
   mergeAggregateErrors(parentB, child)
   const parentC = setErrorProps(parentB, child, { soft: true })
