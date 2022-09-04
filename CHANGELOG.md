@@ -1,3 +1,9 @@
+# 2.5.0
+
+## Features
+
+- Improve merging properties
+
 # 2.4.0
 
 ## Features
