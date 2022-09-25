@@ -46,7 +46,7 @@
     "test": "test"
   },
   "dependencies": {
-    "normalize-exception": "^2.5.1",
+    "normalize-exception": "^2.5.2",
     "set-error-class": "^1.1.0",
     "set-error-message": "^1.2.0",
     "set-error-props": "^3.1.0"
