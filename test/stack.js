@@ -74,7 +74,6 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
 
 each(
   [TypeError, Error],
-  // eslint-disable-next-line unicorn/no-null
   [undefined, null, {}],
   ({ title }, ErrorClass, cause) => {
     test(`Missing child stack traces are not used | ${title}`, (t) => {
@@ -87,7 +86,6 @@ each(
 
 each(
   [Error, TypeError],
-  // eslint-disable-next-line unicorn/no-null
   [undefined, null, true, ''],
   ({ title }, ErrorClass, invalidStack) => {
     test(`Invalid child stack traces are not used | ${title}`, (t) => {
