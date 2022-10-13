@@ -1,3 +1,7 @@
+# 3.1.0
+
+- Switch to MIT license
+
 # 3.0.0
 
 ## Breaking changes
