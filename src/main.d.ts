@@ -12,7 +12,8 @@ type MergeErrorCause<ErrorArg> = 'cause' extends keyof ErrorArg
         ? SetErrorProps<NormalizeError<ErrorArg>, ErrorArg['cause']>
         : NormalizeError<ErrorArg>,
       'cause'
-    >
+    > &
+      Error
   : NormalizeError<ErrorArg>
 
 /**
