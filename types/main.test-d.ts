@@ -1,6 +1,6 @@
 import { expectType, expectAssignable, expectError } from 'tsd'
 
-import mergeErrorCause from './main.js'
+import mergeErrorCause from 'merge-error-cause'
 
 const error = new Error('test')
 expectAssignable<Error>(mergeErrorCause(error))
