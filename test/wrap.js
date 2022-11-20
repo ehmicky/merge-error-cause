@@ -26,8 +26,9 @@ each(
     })
 
     test(`Child is mutated if parent wraps | ${title}`, (t) => {
+      const cause = new TypeError('cause')
       const error = new ErrorClass('test')
-      error.cause = new TypeError('cause')
+      error.cause = cause
       t.is(mergeErrorCause(error).message, 'cause\ntest')
       t.is(error.message, 'test')
     })
