@@ -10,8 +10,15 @@ import setErrorMessage from 'set-error-message'
 // Empty messages are ignored
 //  - This is useful when wrapping an error properties, but not message
 export const mergeMessage = function ({ parent, child, target, stackError }) {
-  const message = getMessage(parent.message, child.message)
-  return setErrorMessage(target, message, stackError.message)
+  const parentMessage = parent.message
+  // eslint-disable-next-line no-param-reassign, fp/no-mutation
+  target.message = child.message
+  return wrapMessage(target, parentMessage, stackError.message)
+}
+
+const wrapMessage = function (error, newMessage, oldMessage = newMessage) {
+  const message = getMessage(newMessage, error.message)
+  return setErrorMessage(error, message, oldMessage)
 }
 
 const getMessage = function (rawParentMessage, rawChildMessage) {

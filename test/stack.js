@@ -27,7 +27,7 @@ const getVeryDeepError = function (ErrorClass) {
 
 const getDeepError = function (ErrorClass) {
   const error = new ErrorClass('test')
-  error.cause = new TypeError('cause')
+  error.cause = new TypeError('outerCause')
   return error
 }
 
