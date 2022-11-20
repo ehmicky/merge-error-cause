@@ -11,9 +11,7 @@ expectAssignable<Error>(mergeErrorCause(error as Error & { cause: true }))
 expectError(mergeErrorCause())
 expectError(mergeErrorCause(error, {}))
 
-expectType<Error | undefined>(
-  mergeErrorCause(error as Error & { cause: true }).cause,
-)
+expectType<unknown>(mergeErrorCause(error as Error & { cause: true }).cause)
 expectType<0>(
   mergeErrorCause(error as Error & { cause: Error & { prop: 0 } }).prop,
 )
