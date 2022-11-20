@@ -2,23 +2,17 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-each(
-  [TypeError, Error],
-  ['test:', 'test: '],
-  ({ title }, ErrorClass, message) => {
-    test(`Prepend messages with colon | ${title}`, (t) => {
-      const error = new ErrorClass(message)
-      error.cause = new TypeError('cause')
-      t.is(mergeErrorCause(error).message, 'test: cause')
-    })
-  },
-)
-
 each([TypeError, Error], ({ title }, ErrorClass) => {
-  test(`Messages are trimmed | ${title}`, (t) => {
-    const error = new ErrorClass(' test ')
-    error.cause = new TypeError(' cause ')
+  test(`Append messages by default | ${title}`, (t) => {
+    const error = new ErrorClass('test')
+    error.cause = new TypeError('cause')
     t.is(mergeErrorCause(error).message, 'cause\ntest')
+  })
+
+  test(`Prepend messages with colon | ${title}`, (t) => {
+    const error = new ErrorClass('test:')
+    error.cause = new TypeError('cause')
+    t.is(mergeErrorCause(error).message, 'test: cause')
   })
 
   test(`Empty parent messages are ignored | ${title}`, (t) => {
@@ -28,27 +22,6 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
     const { message, prop } = mergeErrorCause(error)
     t.is(message, 'cause')
     t.true(prop)
-  })
-
-  test(`Empty child messages are ignored | ${title}`, (t) => {
-    const error = new ErrorClass('test')
-    error.cause = new TypeError('')
-    error.cause.prop = true
-    const { message, prop } = mergeErrorCause(error)
-    t.is(message, 'test')
-    t.true(prop)
-  })
-
-  test(`Prepend messages with colon and newline | ${title}`, (t) => {
-    const error = new ErrorClass('test:\n')
-    error.cause = new TypeError('cause')
-    t.is(mergeErrorCause(error).message, 'test:\ncause')
-  })
-
-  test(`Does not prepend messages with newline but no colon | ${title}`, (t) => {
-    const error = new ErrorClass('test\n')
-    error.cause = new TypeError('cause')
-    t.is(mergeErrorCause(error).message, 'cause\ntest')
   })
 
   test(`New error message is reflected in stack | ${title}`, (t) => {
