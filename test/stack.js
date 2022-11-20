@@ -72,17 +72,13 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
   })
 })
 
-each(
-  [TypeError, Error],
-  [undefined, null, {}],
-  ({ title }, ErrorClass, cause) => {
-    test(`Missing child stack traces are not used | ${title}`, (t) => {
-      const error = new ErrorClass('test')
-      error.cause = cause
-      isSameStack(t, error.stack, mergeErrorCause(error).stack)
-    })
-  },
-)
+each([TypeError, Error], [undefined, {}], ({ title }, ErrorClass, cause) => {
+  test(`Missing child stack traces are not used | ${title}`, (t) => {
+    const error = new ErrorClass('test')
+    error.cause = cause
+    isSameStack(t, error.stack, mergeErrorCause(error).stack)
+  })
+})
 
 each(
   [Error, TypeError],
