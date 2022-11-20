@@ -1,3 +1,10 @@
+# 3.5.0
+
+## Features
+
+- Improve [`set-error-props`](https://github.com/ehmicky/set-error-props)
+  dependency
+
 # 3.4.0
 
 ## Features
