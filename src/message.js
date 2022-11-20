@@ -16,7 +16,7 @@ export const mergeMessage = function ({ parent, child, target, stackError }) {
   return wrapMessage(target, parentMessage, stackError.message)
 }
 
-const wrapMessage = function (error, newMessage, oldMessage = newMessage) {
+const wrapMessage = function (error, newMessage, oldMessage) {
   const message = getMessage(newMessage, error.message)
   return setErrorMessage(error, message, oldMessage)
 }
