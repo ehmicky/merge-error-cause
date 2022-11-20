@@ -1,3 +1,10 @@
+# 3.4.0
+
+## Features
+
+- Separate message wrapping logic to own library
+  [`wrap-error-message`](https://github.com/ehmicky/wrap-error-message)
+
 # 3.3.0
 
 ## Features
