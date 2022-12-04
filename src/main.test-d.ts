@@ -1,4 +1,4 @@
-import { expectType, expectAssignable, expectError } from 'tsd'
+import { expectType, expectAssignable } from 'tsd'
 
 import mergeErrorCause from 'merge-error-cause'
 
@@ -8,8 +8,10 @@ expectAssignable<Error>(mergeErrorCause(undefined))
 expectAssignable<Error>(mergeErrorCause('test'))
 expectAssignable<Error>(mergeErrorCause(error as Error & { cause: true }))
 
-expectError(mergeErrorCause())
-expectError(mergeErrorCause(error, {}))
+// @ts-expect-error
+mergeErrorCause()
+// @ts-expect-error
+mergeErrorCause(error, {})
 
 expectType<unknown>(mergeErrorCause(error as Error & { cause: true }).cause)
 expectType<0>(
