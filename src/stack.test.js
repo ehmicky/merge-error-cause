@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
@@ -127,4 +126,3 @@ each(
     })
   },
 )
-/* eslint-enable max-lines */
