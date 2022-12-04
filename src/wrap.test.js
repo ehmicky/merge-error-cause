@@ -1,6 +1,7 @@
 import test from 'ava'
-import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
+
+import mergeErrorCause from 'merge-error-cause'
 
 // eslint-disable-next-line fp/no-class
 class PrototypeWrapError extends Error {}

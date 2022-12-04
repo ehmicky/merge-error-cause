@@ -1,6 +1,7 @@
 import test from 'ava'
-import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
+
+import mergeErrorCause from 'merge-error-cause'
 
 each([undefined, null, '', new Set([])], ({ title }, error) => {
   test(`Error is normalized | ${title}`, (t) => {
