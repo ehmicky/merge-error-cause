@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "normalize-exception": "^2.11.0",
-    "set-error-class": "^1.5.0",
+    "set-error-class": "^1.6.0",
     "set-error-props": "^4.0.0",
     "wrap-error-message": "^1.0.0"
   },
