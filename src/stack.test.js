@@ -5,27 +5,25 @@ import mergeErrorCause from 'merge-error-cause'
 
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
-const isSameStack = function (t, stackA, stackB) {
+const isSameStack = (t, stackA, stackB) => {
   t.is(getFirstStackLine(stackA), getFirstStackLine(stackB))
 }
 
-const getFirstStackLine = function (stack) {
+const getFirstStackLine = (stack) => {
   const lines = stack.split('\n')
   const index = lines.findIndex(isStackLine)
   return lines[index]
 }
 
-const isStackLine = function (line) {
-  return line.trim().startsWith('at ')
-}
+const isStackLine = (line) => line.trim().startsWith('at ')
 
-const getVeryDeepError = function (ErrorClass) {
+const getVeryDeepError = (ErrorClass) => {
   const error = getDeepError(ErrorClass)
   error.cause.cause = new TypeError('innerCause')
   return error
 }
 
-const getDeepError = function (ErrorClass) {
+const getDeepError = (ErrorClass) => {
   const error = new ErrorClass('test')
   error.cause = new TypeError('outerCause')
   return error

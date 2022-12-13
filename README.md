@@ -22,7 +22,7 @@ and
 ```js
 import mergeErrorCause from 'merge-error-cause'
 
-const main = function (userId) {
+const main = (userId) => {
   try {
     return createUser(userId)
   } catch (error) {
@@ -33,7 +33,7 @@ const main = function (userId) {
   }
 }
 
-const createUser = function (userId) {
+const createUser = (userId) => {
   try {
     validateUserId(userId)
     return sendDatabaseRequest('create', userId)
@@ -42,7 +42,7 @@ const createUser = function (userId) {
   }
 }
 
-const validateUserId = function (userId) {
+const validateUserId = (userId) => {
   if (typeof userId !== 'string') {
     throw new TypeError(`Invalid user id: ${userId}.`)
   }

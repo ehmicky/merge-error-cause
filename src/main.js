@@ -10,16 +10,16 @@ import { getWrap } from './wrap.js'
 // Merge `error.cause` recursively to a single error.
 // In Node <16.9.0 and in some browsers, `error.cause` requires a polyfill like
 // `error-cause-ponyfill`.
-export default function mergeErrorCause(error) {
-  return mergeError(error, []).error
-}
+const mergeErrorCause = (error) => mergeError(error, []).error
+
+export default mergeErrorCause
 
 // The recursion is applied pair by pair, as opposed to all errors at once.
 //  - This ensures the same result no matter how many times this function
 //    applied along the stack trace
 // It is applied in `error.cause`, but not in `error.errors` which have their
 // own stack.
-const mergeError = function (error, parents) {
+const mergeError = (error, parents) => {
   if (parents.includes(error)) {
     return {}
   }
@@ -37,7 +37,7 @@ const mergeError = function (error, parents) {
 
 // `normalizeException()` is called again to ensure the new `name|message` is
 // reflected in `error.stack`.
-const mergeCause = function (parent, recurse) {
+const mergeCause = (parent, recurse) => {
   const wrap = getWrap(parent)
 
   if (parent.cause === undefined) {
@@ -51,7 +51,7 @@ const mergeCause = function (parent, recurse) {
   return { parent: parentA, childHasStack }
 }
 
-const mergeChild = function ({ parent, child, childHasStack, wrap }) {
+const mergeChild = ({ parent, child, childHasStack, wrap }) => {
   if (child === undefined) {
     return parent
   }

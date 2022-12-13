@@ -5,7 +5,7 @@
 // class instead.
 //  - This is because modifying an instance prototype is hacky, as the instance
 //    would have a prototype different from the constructor it called
-export const getWrap = function (parent) {
+export const getWrap = (parent) => {
   const { wrap, name } = parent
 
   if (typeof wrap !== 'boolean') {

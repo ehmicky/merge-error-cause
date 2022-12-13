@@ -39,7 +39,7 @@ type MergeErrorCause<ErrorArg> = 'cause' extends keyof ErrorArg
  *
  * @example
  * ```js
- * const main = function (userId) {
+ * const main = (userId) => {
  *   try {
  *     return createUser(userId)
  *   } catch (error) {
@@ -50,7 +50,7 @@ type MergeErrorCause<ErrorArg> = 'cause' extends keyof ErrorArg
  *   }
  * }
  *
- * const createUser = function (userId) {
+ * const createUser = (userId) => {
  *   try {
  *     validateUserId(userId)
  *     return sendDatabaseRequest('create', userId)
@@ -59,7 +59,7 @@ type MergeErrorCause<ErrorArg> = 'cause' extends keyof ErrorArg
  *   }
  * }
  *
- * const validateUserId = function (userId) {
+ * const validateUserId = (userId) => {
  *   if (typeof userId !== 'string') {
  *     throw new TypeError(`Invalid user id: ${userId}.`)
  *   }

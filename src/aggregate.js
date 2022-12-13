@@ -11,7 +11,7 @@ import { setErrorProperty } from './set.js'
 //       - Those could lead to confusing stack traces
 // - I.e. it is the responsibility of the consumers to recurse and handle
 //   `error.errors`
-export const mergeAggregateCauses = function (parent, recurse) {
+export const mergeAggregateCauses = (parent, recurse) => {
   if (parent.errors === undefined) {
     return
   }
@@ -22,12 +22,7 @@ export const mergeAggregateCauses = function (parent, recurse) {
   setErrorProperty(parent, 'errors', errors)
 }
 
-export const mergeAggregateErrors = function ({
-  target,
-  source,
-  parent,
-  child,
-}) {
+export const mergeAggregateErrors = ({ target, source, parent, child }) => {
   if (!hasErrors(target)) {
     mergeSourceErrors(target, source)
     return
@@ -38,14 +33,11 @@ export const mergeAggregateErrors = function ({
   }
 }
 
-const mergeSourceErrors = function (target, source) {
+const mergeSourceErrors = (target, source) => {
   if (source.errors !== undefined) {
     setErrorProperty(target, 'errors', source.errors)
   }
 }
 
-const hasErrors = function (targetOrSource) {
-  return (
-    targetOrSource.errors !== undefined && targetOrSource.errors.length !== 0
-  )
-}
+const hasErrors = (targetOrSource) =>
+  targetOrSource.errors !== undefined && targetOrSource.errors.length !== 0
