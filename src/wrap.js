@@ -12,12 +12,10 @@ export const getWrap = (parent) => {
     return name === 'Error'
   }
 
-  if (isOwn.call(parent, 'wrap')) {
+  if (Object.hasOwn(parent, 'wrap')) {
     // eslint-disable-next-line no-param-reassign, fp/no-delete
     delete parent.wrap
   }
 
   return wrap
 }
-
-const { hasOwnProperty: isOwn } = Object.prototype
