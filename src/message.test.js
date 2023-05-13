@@ -2,7 +2,6 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-
 each([TypeError, Error], ({ title }, ErrorClass) => {
   test(`Append messages by default | ${title}`, (t) => {
     const error = new ErrorClass('test')

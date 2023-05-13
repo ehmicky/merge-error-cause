@@ -2,7 +2,6 @@ import test from 'ava'
 import mergeErrorCause from 'merge-error-cause'
 import { each } from 'test-each'
 
-
 const { propertyIsEnumerable: isEnum } = Object.prototype
 
 each([TypeError, Error], ({ title }, ErrorClass) => {
