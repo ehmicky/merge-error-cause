@@ -59,7 +59,7 @@
     "wrap-error-message": "^2.0.1"
   },
   "devDependencies": {
-    "@ehmicky/dev-tasks": "^2.0.92",
+    "@ehmicky/dev-tasks": "^2.0.93",
     "test-each": "^6.0.1"
   },
   "engines": {
