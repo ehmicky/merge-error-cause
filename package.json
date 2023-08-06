@@ -41,7 +41,10 @@
   ],
   "license": "MIT",
   "homepage": "https://www.github.com/ehmicky/merge-error-cause",
-  "repository": "ehmicky/merge-error-cause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ehmicky/merge-error-cause.git"
+  },
   "bugs": {
     "url": "https://github.com/ehmicky/merge-error-cause/issues"
   },
