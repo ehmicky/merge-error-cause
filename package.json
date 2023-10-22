@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "normalize-exception": "^3.0.0",
-    "set-error-class": "^2.0.0",
+    "set-error-class": "^3.0.0",
     "set-error-props": "^5.0.0",
     "wrap-error-message": "^2.0.1"
   },
