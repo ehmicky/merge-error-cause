@@ -56,7 +56,7 @@
     "normalize-exception": "^3.0.0",
     "set-error-class": "^3.0.0",
     "set-error-props": "^6.0.0",
-    "wrap-error-message": "^2.0.1"
+    "wrap-error-message": "^3.0.0"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^2.0.102",
