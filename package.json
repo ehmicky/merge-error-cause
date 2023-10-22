@@ -1,6 +1,6 @@
 {
   "name": "merge-error-cause",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "type": "module",
   "exports": {
     "types": "./build/src/main.d.ts",
