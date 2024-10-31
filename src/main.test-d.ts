@@ -1,4 +1,4 @@
-import { expectType, expectAssignable } from 'tsd'
+import { expectAssignable, expectType } from 'tsd'
 
 import mergeErrorCause from 'merge-error-cause'
 
