@@ -48,4 +48,11 @@ each([TypeError, Error], ({ title }, ErrorClass) => {
     const { stack, message } = mergeErrorCause(error)
     t.true(stack.includes(message))
   })
+
+  test(`Message is not repeated in the stack even when the cause is not an error instance | ${title}`, (t) => {
+    const error = new ErrorClass('testMessage')
+    error.cause = 'causeMessage'
+    const { stack } = mergeErrorCause(error)
+    t.is([...stack.matchAll('testMessage')].length, 1)
+  })
 })
