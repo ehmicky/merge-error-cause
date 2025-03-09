@@ -1,3 +1,10 @@
+# 5.0.1
+
+## Bug fixes
+
+- Fix `error.message` repeating in `error.stack`, if an invalid `error.cause` is
+  used
+
 # 5.0.0
 
 ## Breaking changes
