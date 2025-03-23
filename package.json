@@ -53,7 +53,7 @@
     "lib": "src"
   },
   "dependencies": {
-    "normalize-exception": "^4.0.0",
+    "normalize-exception": "^4.0.1",
     "set-error-class": "^3.0.0",
     "set-error-props": "^6.0.0",
     "wrap-error-message": "^3.0.0"
