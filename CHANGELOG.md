@@ -1,3 +1,9 @@
+# 5.0.2
+
+## Documentation
+
+- Improve documentation in `README.md`
+
 # 5.0.1
 
 ## Bug fixes
